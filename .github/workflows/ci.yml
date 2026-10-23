@@ -24,7 +24,7 @@ jobs:
       - name: Install test mail servers
         run: |
           sudo apt-get update -qq
-          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq dovecot-imapd dovecot-pop3d
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq dovecot-imapd dovecot-pop3d dovecot-managesieved dovecot-sieve
           sudo systemctl stop dovecot || true
           mkdir -p /tmp/mailbox-test-env
           curl -sSL -o /tmp/mailbox-test-env/greenmail.jar \
@@ -49,6 +49,29 @@ jobs:
           rustup target add aarch64-apple-darwin x86_64-apple-darwin
       - name: Build app and DMG
         run: scripts/build-macos.sh
+      - name: Screenshot with demo data
+        if: success()
+        run: |
+          APP="$PWD/macos/build/DerivedData/Build/Products/Release/Mailbox.app"
+          export MAILBOX_KEY_FILE=1
+          "$APP/Contents/MacOS/Mailbox" --demo > /tmp/app.log 2>&1 &
+          sleep 30
+          screencapture -x /tmp/shot.png || true
+          if [ -f /tmp/shot.png ]; then
+            sips -Z 1500 -s format jpeg -s formatOptions 55 /tmp/shot.png --out /tmp/shot.jpg >/dev/null
+            echo "SCREENSHOT_BEGIN"
+            base64 -i /tmp/shot.jpg | fold -w 2000
+            echo "SCREENSHOT_END"
+          fi
+          tail -30 /tmp/app.log || true
+          tail -30 "$HOME/Library/Application Support/Mailbox/logs/mailcore.log" || true
+      - name: Upload screenshot
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshot
+          path: /tmp/shot.png
+          if-no-files-found: ignore
       - name: Upload build log
         if: always()
         uses: actions/upload-artifact@v4

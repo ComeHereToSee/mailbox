@@ -419,7 +419,8 @@ struct RulesSettings: View {
                 Spacer()
                 Text("规则按顺序作用于新收到的邮件。").font(.caption).foregroundStyle(.secondary)
             }
-            .padding()
+            .padding(.horizontal)
+            SieveBox().padding([.horizontal, .bottom])
         }
         .task { await load() }
         .sheet(item: $editing) { r in
@@ -444,6 +445,87 @@ struct RulesSettings: View {
         let c = r.conditions.map { "\(RuleEditor.fieldName($0.field)) \(RuleEditor.opName($0.op)) \($0.value)" }.joined(separator: r.matchAll ? " 且 " : " 或 ")
         let a = r.actions.map { RuleEditor.actionName($0.kind) + ($0.value.isEmpty ? "" : " \($0.value)") }.joined(separator: "，")
         return "如果 \(c) → \(a)"
+    }
+}
+
+/// Uploads rules as a server-side Sieve script (works even when the Mac is off).
+struct SieveBox: View {
+    @EnvironmentObject private var state: AppState
+    @State private var accountId = ""
+    @State private var status: APIClient.SieveStatus?
+    @State private var busy = false
+    @State private var message: String?
+    @State private var showScript = false
+
+    var body: some View {
+        GroupBox("服务器端规则（Sieve）") {
+            VStack(alignment: .leading, spacing: 8) {
+                Text("支持 ManageSieve 的邮箱（Fastmail、mailbox.org、自建 Dovecot 等）可以把规则上传到服务器，Mac 关机时也会生效。移动、标记、转发会在服务器上执行；标签、分类、通知等只在本地生效。")
+                    .font(.caption).foregroundStyle(.secondary)
+                HStack {
+                    Picker("账户", selection: $accountId) {
+                        ForEach(state.accounts.filter { $0.kind == .imap }) { Text($0.displayLabel).tag($0.id) }
+                    }
+                    .frame(width: 260)
+                    Button("检查") { Task { await check() } }
+                    Button("上传规则") { Task { await upload() } }.disabled(status?.supported != true || busy)
+                    Button("移除") { Task { await remove() } }.disabled(status?.supported != true || busy)
+                    if busy { ProgressView().controlSize(.small) }
+                }
+                if let s = status {
+                    if s.supported {
+                        Text("服务器支持 Sieve。脚本：" + (s.scripts.isEmpty ? "无" : s.scripts.map { $0.name + ($0.active ? "（启用）" : "") }.joined(separator: "、")))
+                            .font(.caption)
+                        if let script = s.activeScript {
+                            DisclosureGroup("当前启用的脚本", isExpanded: $showScript) {
+                                ScrollView { Text(script).font(.system(.caption, design: .monospaced)).textSelection(.enabled) }
+                                    .frame(height: 120)
+                            }
+                        }
+                    } else {
+                        Text("这个邮箱不支持 ManageSieve" + (s.error.map { "（\($0)）" } ?? "")).font(.caption).foregroundStyle(.secondary)
+                    }
+                }
+                if let message { Text(message).font(.caption) }
+            }
+        }
+        .onAppear { if accountId.isEmpty { accountId = state.accounts.first { $0.kind == .imap }?.id ?? "" } }
+    }
+
+    private func check() async {
+        guard !accountId.isEmpty else { return }
+        busy = true
+        defer { busy = false }
+        do {
+            status = try await state.api.sieveStatus(accountId)
+            message = nil
+        } catch {
+            message = error.localizedDescription
+        }
+    }
+
+    private func upload() async {
+        busy = true
+        defer { busy = false }
+        do {
+            _ = try await state.api.sieveUpload(accountId)
+            message = "已上传并启用"
+            status = try? await state.api.sieveStatus(accountId)
+        } catch {
+            message = error.localizedDescription
+        }
+    }
+
+    private func remove() async {
+        busy = true
+        defer { busy = false }
+        do {
+            try await state.api.sieveRemove(accountId)
+            message = "已从服务器移除"
+            status = try? await state.api.sieveStatus(accountId)
+        } catch {
+            message = error.localizedDescription
+        }
     }
 }
 

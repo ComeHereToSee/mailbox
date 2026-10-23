@@ -121,7 +121,10 @@ final class AppState: ObservableObject {
         })
         events = stream
         stream.start()
+        let demo = CommandLine.arguments.contains("--demo")
+        if demo { try? await api.seedDemo() }
         await reloadAll()
+        if demo, let first = messages.first { selection = [first.id] }
         if accounts.isEmpty { showOnboarding = true }
         if settings.appLock { locked = true }
         if let req = pendingCompose {

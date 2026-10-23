@@ -20,6 +20,7 @@ pub mod pop3;
 pub mod rules;
 pub mod search;
 pub mod secrets;
+pub mod sieve;
 pub mod smtp;
 pub mod store;
 

@@ -338,3 +338,65 @@ impl Engine {
         Ok(total(&before).saturating_sub(total(&after)))
     }
 }
+
+#[derive(serde::Serialize, Debug, Default)]
+pub struct SieveStatus {
+    pub supported: bool,
+    pub scripts: Vec<crate::sieve::SieveScript>,
+    pub active_script: Option<String>,
+    pub error: Option<String>,
+}
+
+impl Engine {
+    async fn sieve_connect(&self, acc: &Account) -> Result<crate::sieve::SieveConn> {
+        let imap = acc.config.imap.as_ref().ok_or_else(|| Error::Invalid("服务器规则只支持 IMAP 账户".into()))?;
+        let server = crate::sieve::server_for(imap);
+        let auth = match self.credentials(acc).await? {
+            super::Cred::Password(p) => crate::sieve::SieveAuth::Password(p),
+            super::Cred::OAuth(t) => crate::sieve::SieveAuth::OAuth2(t),
+        };
+        crate::sieve::SieveConn::connect(&server, &Engine::login_name(acc, imap), &auth).await
+    }
+
+    /// Scripts on the server (ManageSieve). `supported` is false when the server has no ManageSieve.
+    pub async fn sieve_status(&self, account_id: &str) -> Result<SieveStatus> {
+        let acc = self.db.account(account_id)?;
+        let mut c = match self.sieve_connect(&acc).await {
+            Ok(c) => c,
+            Err(e) if e.is_connection() => return Ok(SieveStatus { error: Some(e.to_string()), ..Default::default() }),
+            Err(e) => return Err(e),
+        };
+        let scripts = c.list().await?;
+        let active_script = match scripts.iter().find(|s| s.active) {
+            Some(s) => Some(c.get(&s.name).await?),
+            None => None,
+        };
+        c.logout().await;
+        Ok(SieveStatus { supported: true, scripts, active_script, error: None })
+    }
+
+    /// Uploads the account's rules as the active server-side Sieve script. Returns the script.
+    pub async fn sieve_upload(&self, account_id: &str) -> Result<String> {
+        let acc = self.db.account(account_id)?;
+        let rules: Vec<Rule> = self.db.kv_list("rules")?;
+        let folder_for = |name: &str| self.find_folder(&acc.id, name).and_then(|id| self.db.folder(id).ok()).map(|f| f.path);
+        let script = crate::sieve::rules_to_sieve(&rules, &acc.id, &folder_for);
+        let mut c = self.sieve_connect(&acc).await?;
+        c.check(&script).await?;
+        c.put(crate::sieve::SCRIPT_NAME, &script).await?;
+        c.activate(crate::sieve::SCRIPT_NAME).await?;
+        c.logout().await;
+        Ok(script)
+    }
+
+    pub async fn sieve_remove(&self, account_id: &str) -> Result<()> {
+        let acc = self.db.account(account_id)?;
+        let mut c = self.sieve_connect(&acc).await?;
+        if c.list().await?.iter().any(|s| s.name == crate::sieve::SCRIPT_NAME) {
+            c.activate("").await.ok();
+            c.delete(crate::sieve::SCRIPT_NAME).await?;
+        }
+        c.logout().await;
+        Ok(())
+    }
+}

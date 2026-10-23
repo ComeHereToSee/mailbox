@@ -287,6 +287,20 @@ extension APIClient {
         let r: R = try await post("/v1/rules/\(id)/run")
         return r.affected
     }
+    struct SieveStatus: Decodable {
+        struct Script: Decodable, Hashable { var name: String; var active: Bool }
+        var supported: Bool
+        var scripts: [Script]
+        var activeScript: String?
+        var error: String?
+    }
+    func sieveStatus(_ account: String) async throws -> SieveStatus { try await get("/v1/accounts/\(account)/sieve") }
+    func sieveUpload(_ account: String) async throws -> String {
+        struct R: Decodable { var script: String }
+        let r: R = try await post("/v1/accounts/\(account)/sieve")
+        return r.script
+    }
+    func sieveRemove(_ account: String) async throws { try await send("DELETE", "/v1/accounts/\(account)/sieve") }
     func templates() async throws -> [Template] { try await get("/v1/templates") }
     func saveTemplate(_ t: Template) async throws -> Template { try await post("/v1/templates", t) }
     func deleteTemplate(_ id: String) async throws { try await send("DELETE", "/v1/templates/\(id)") }

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Starts throwaway mail servers for the integration tests:
-#   Dovecot  IMAP 11143 (STARTTLS) / 11993 (TLS), POP3 11110 / 11995
+#   Dovecot  IMAP 11143 (STARTTLS) / 11993 (TLS), POP3 11110 / 11995, ManageSieve 14190
 #   GreenMail SMTP 3025 / SMTPS 3465 (+ its own IMAP 3143 to inspect sent mail)
 # Users: alice@test.local / bob@test.local, password "secret".
 set -euo pipefail
@@ -34,7 +34,7 @@ cat > "$DIR/dovecot.conf" <<CONF
 base_dir = $DIR/run
 state_dir = $DIR/state
 log_path = $DIR/dovecot.log
-protocols = imap pop3
+protocols = imap pop3 sieve
 listen = 127.0.0.1
 ssl = yes
 ssl_cert = <$DIR/cert.pem
@@ -77,6 +77,18 @@ service pop3-login {
 }
 service anvil {
   chroot =
+}
+service managesieve-login {
+  chroot =
+  inet_listener sieve {
+    port = 14190
+  }
+}
+protocol lda {
+  mail_plugins = \$mail_plugins sieve
+}
+plugin {
+  sieve = file:~/sieve;active=~/.dovecot.sieve
 }
 namespace inbox {
   inbox = yes

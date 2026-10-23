@@ -31,6 +31,7 @@ pub(super) fn router(state: AppState) -> Router {
         .route("/v1/accounts/{id}", get(account).put(update_account).delete(delete_account))
         .route("/v1/accounts/{id}/sync", post(sync_account))
         .route("/v1/accounts/{id}/reauth", post(reauth_account))
+        .route("/v1/accounts/{id}/sieve", get(sieve_status).post(sieve_upload).delete(sieve_remove))
         .route("/v1/sync", post(sync_all))
         .route("/v1/identities", get(identities).post(save_identity))
         .route("/v1/identities/{id}", delete(delete_identity))
@@ -212,6 +213,19 @@ struct Reauth {
 
 async fn reauth_account(State(st): St, Path(id): Path<String>, Json(b): Json<Reauth>) -> ApiResult<Json<Value>> {
     st.engine.reauthorize(&id, &b.oauth_state)?;
+    Ok(ok())
+}
+
+async fn sieve_status(State(st): St, Path(id): Path<String>) -> ApiResult<Json<Value>> {
+    Ok(Json(json!(st.engine.sieve_status(&id).await?)))
+}
+
+async fn sieve_upload(State(st): St, Path(id): Path<String>) -> ApiResult<Json<Value>> {
+    Ok(Json(json!({ "script": st.engine.sieve_upload(&id).await? })))
+}
+
+async fn sieve_remove(State(st): St, Path(id): Path<String>) -> ApiResult<Json<Value>> {
+    st.engine.sieve_remove(&id).await?;
     Ok(ok())
 }
 
