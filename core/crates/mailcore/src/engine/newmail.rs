@@ -57,34 +57,7 @@ pub(super) async fn process(e: &Engine, acc: &Account, mut conn: Option<&mut Ima
             raw_headers: raw_headers.as_deref(),
         };
         let out = rules::evaluate(&rule_list, &input);
-        let mut moved = false;
-        if out.vip {
-            let _ = e.db.set_vip(&m.summary.from.email, true);
-        }
-        if let Some(c) = &out.category {
-            let _ = e.db.set_category(*id, Category::parse(c));
-        }
-        if out.mark_read {
-            let _ = e.act(&[*id], Action::Read).await;
-        }
-        if out.flag {
-            let _ = e.act(&[*id], Action::Flag).await;
-        }
-        if !out.labels.is_empty() {
-            let _ = e.act(&[*id], Action::Label { add: out.labels.clone(), remove: vec![] }).await;
-        }
-        if !out.forward_to.is_empty() {
-            let _ = e.forward_automatically(*id, &out.forward_to).await;
-        }
-        if out.trash {
-            moved = e.act(&[*id], Action::Trash).await.is_ok();
-        } else if out.archive {
-            moved = e.act(&[*id], Action::Archive).await.is_ok();
-        } else if let Some(target) = &out.move_to {
-            if let Some(fid) = e.find_folder(&acc.id, target) {
-                moved = e.act(&[*id], Action::Move { folder_id: fid }).await.is_ok();
-            }
-        }
+        let moved = apply_outcome(e, &acc.id, *id, &m.summary.from.email, &out).await;
         if moved || out.mark_read {
             continue;
         }
@@ -92,6 +65,40 @@ pub(super) async fn process(e: &Engine, acc: &Account, mut conn: Option<&mut Ima
         e.notify_message(&summary, out.notify).await;
     }
     e.changed(Some(&acc.id));
+}
+
+/// Applies the actions of matched rules. Returns true when the message left the inbox.
+pub(super) async fn apply_outcome(e: &Engine, account_id: &str, id: MessageId, from: &str, out: &rules::RuleOutcome) -> bool {
+    if out.vip {
+        let _ = e.db.set_vip(from, true);
+    }
+    if let Some(c) = &out.category {
+        let _ = e.db.set_category(id, Category::parse(c));
+    }
+    if out.mark_read {
+        let _ = e.act(&[id], Action::Read).await;
+    }
+    if out.flag {
+        let _ = e.act(&[id], Action::Flag).await;
+    }
+    if !out.labels.is_empty() {
+        let _ = e.act(&[id], Action::Label { add: out.labels.clone(), remove: vec![] }).await;
+    }
+    if !out.forward_to.is_empty() {
+        let _ = e.forward_automatically(id, &out.forward_to).await;
+    }
+    if out.trash {
+        e.act(&[id], Action::Trash).await.is_ok()
+    } else if out.archive {
+        e.act(&[id], Action::Archive).await.is_ok()
+    } else if let Some(target) = &out.move_to {
+        match e.find_folder(account_id, target) {
+            Some(fid) => e.act(&[id], Action::Move { folder_id: fid }).await.is_ok(),
+            None => false,
+        }
+    } else {
+        false
+    }
 }
 
 impl Engine {

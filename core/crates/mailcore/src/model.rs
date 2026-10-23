@@ -337,6 +337,8 @@ pub struct MessageSummary {
     pub to: Vec<EmailAddress>,
     pub date: i64,
     pub snippet: String,
+    /// Position in lists (the date, or when a snoozed message came back).
+    pub sort_date: i64,
     pub flags: Flags,
     pub has_attachments: bool,
     pub labels: Vec<String>,

@@ -101,6 +101,7 @@ fn summary_from_row(r: &Row) -> rusqlite::Result<MessageSummary> {
         to: from_json(r.get("to_json")?),
         date: r.get("date")?,
         snippet: r.get("snippet")?,
+        sort_date: r.get("sort_date")?,
         flags: Flags {
             seen: r.get("seen")?,
             flagged: r.get("flagged")?,
@@ -595,6 +596,13 @@ impl Db {
                 .query_map([account_id], |r| Ok((r.get::<_, String>(0)?, (r.get(1)?, r.get(2)?))))?
                 .collect::<rusqlite::Result<std::collections::HashMap<_, _>>>()?;
             Ok(rows)
+        })
+    }
+
+    pub fn message_by_uid(&self, folder_id: FolderId, uid: u32) -> Result<Option<MessageId>> {
+        self.read(|c| {
+            Ok(c.query_row("SELECT id FROM messages WHERE folder_id = ? AND uid = ?", params![folder_id, uid], |r| r.get(0))
+                .optional()?)
         })
     }
 

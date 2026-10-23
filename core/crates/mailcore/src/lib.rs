@@ -1,6 +1,7 @@
 //! Mailbox core: account sync (IMAP / POP3 / SMTP), local store, search and the
 //! local HTTP API used by the macOS app.
 
+pub mod api;
 pub mod autoconfig;
 pub mod categorize;
 pub mod engine;

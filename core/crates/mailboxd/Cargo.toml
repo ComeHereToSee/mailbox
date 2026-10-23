@@ -1,6 +1,9 @@
 [package]
 name = "mailboxd"
-version = "0.1.0"
-edition = "2024"
+edition.workspace = true
+version.workspace = true
 
 [dependencies]
+mailcore = { path = "../mailcore" }
+tokio = { version = "1", features = ["full"] }
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }

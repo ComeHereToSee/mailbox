@@ -3,7 +3,9 @@
 
 mod accounts;
 mod actions;
+mod demo;
 mod detail;
+mod extras;
 mod imap_worker;
 mod newmail;
 mod ops;
@@ -151,6 +153,10 @@ impl Engine {
         }
     }
 
+    pub fn shutdown_token(&self) -> CancellationToken {
+        self.shutdown.clone()
+    }
+
     pub fn is_shutting_down(&self) -> bool {
         self.shutdown.is_cancelled()
     }
@@ -161,6 +167,10 @@ impl Engine {
         self.stop_worker(&acc.id);
         if !acc.enabled {
             self.set_status(&acc.id, SyncState::Disabled, None);
+            return;
+        }
+        if acc.provider.as_deref() == Some("demo") {
+            self.set_status(&acc.id, SyncState::Idle, None);
             return;
         }
         let wake = Arc::new(Notify::new());
