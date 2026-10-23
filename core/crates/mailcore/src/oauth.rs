@@ -142,7 +142,12 @@ pub async fn exchange_code(p: &Provider, code: &str, verifier: &str, redirect_ur
 }
 
 pub async fn refresh(p: &Provider, refresh_token: &str) -> Result<Tokens> {
-    let mut t = token_request(p, &[("grant_type", "refresh_token"), ("refresh_token", refresh_token)]).await?;
+    let mut form = vec![("grant_type", "refresh_token"), ("refresh_token", refresh_token)];
+    if p.id == "microsoft" {
+        // The v2.0 endpoint expects the scopes again on refresh.
+        form.push(("scope", p.scopes));
+    }
+    let mut t = token_request(p, &form).await?;
     if t.refresh_token.is_none() {
         t.refresh_token = Some(refresh_token.to_string());
     }
