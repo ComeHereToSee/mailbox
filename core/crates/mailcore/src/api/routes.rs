@@ -1,5 +1,5 @@
 use super::{ApiError, ApiResult, AppState};
-use crate::engine::{Action, NewAccount};
+use crate::engine::{Action, KeyImport, NewAccount};
 use crate::error::Error;
 use crate::model::*;
 use crate::store::ListQuery;
@@ -87,6 +87,13 @@ pub(super) fn router(state: AppState) -> Router {
         .route("/v1/storage", get(storage))
         .route("/v1/cleanup", post(cleanup))
         .route("/v1/calendar/invite", post(build_invite))
+        .route("/v1/keys", get(keys))
+        .route("/v1/keys/import", post(import_key))
+        .route("/v1/keys/generate", post(generate_key))
+        .route("/v1/keys/check", post(check_keys))
+        .route("/v1/keys/{id}", delete(delete_key))
+        .route("/v1/keys/{id}/export", get(export_key))
+        .route("/v1/keys/{id}/passphrase", post(key_passphrase))
         .with_state(state)
 }
 
@@ -801,6 +808,68 @@ async fn storage(State(st): St) -> ApiResult<Json<Value>> {
 
 async fn cleanup(State(st): St) -> ApiResult<Json<Value>> {
     Ok(Json(json!({ "freed": st.engine.cleanup()? })))
+}
+
+// ---- PGP / S/MIME keys -----------------------------------------------------------------
+
+async fn keys(State(st): St) -> Json<Value> {
+    Json(json!(st.engine.list_keys()))
+}
+
+async fn import_key(State(st): St, Json(req): Json<KeyImport>) -> ApiResult<Json<Value>> {
+    Ok(Json(json!(st.engine.import_key(req)?)))
+}
+
+#[derive(Deserialize)]
+struct GenerateKey {
+    #[serde(default)]
+    name: String,
+    email: String,
+    passphrase: Option<String>,
+}
+
+async fn generate_key(State(st): St, Json(req): Json<GenerateKey>) -> ApiResult<Json<Value>> {
+    let engine = st.engine.clone();
+    // RSA key generation takes a moment; keep it off the async workers.
+    let info = tokio::task::spawn_blocking(move || engine.generate_key(&req.name, &req.email, req.passphrase.as_deref()))
+        .await
+        .map_err(|e| Error::Other(e.to_string()))??;
+    Ok(Json(json!(info)))
+}
+
+#[derive(Deserialize)]
+struct CheckKeys {
+    recipients: Vec<String>,
+}
+
+async fn check_keys(State(st): St, Json(req): Json<CheckKeys>) -> Json<Value> {
+    let (have, missing) = st.engine.recipient_keys(&req.recipients);
+    Json(json!({ "have": have, "missing": missing }))
+}
+
+async fn delete_key(State(st): St, Path(id): Path<String>) -> ApiResult<Json<Value>> {
+    st.engine.delete_key(&id)?;
+    Ok(Json(json!({ "ok": true })))
+}
+
+#[derive(Deserialize)]
+struct ExportParams {
+    #[serde(default)]
+    secret: bool,
+}
+
+async fn export_key(State(st): St, Path(id): Path<String>, Query(p): Query<ExportParams>) -> ApiResult<Json<Value>> {
+    Ok(Json(json!({ "text": st.engine.export_key(&id, p.secret)? })))
+}
+
+#[derive(Deserialize)]
+struct Passphrase {
+    passphrase: Option<String>,
+}
+
+async fn key_passphrase(State(st): St, Path(id): Path<String>, Json(req): Json<Passphrase>) -> ApiResult<Json<Value>> {
+    st.engine.set_key_passphrase(&id, req.passphrase.as_deref())?;
+    Ok(Json(json!({ "ok": true })))
 }
 
 async fn demo(State(st): St) -> ApiResult<Json<Value>> {

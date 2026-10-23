@@ -292,6 +292,21 @@ struct MessageCard: View {
 
     @ViewBuilder
     private var banners: some View {
+        if let err = detail.decryptError {
+            Banner(icon: "lock.trianglebadge.exclamationmark", color: .red, text: "无法解密：\(err)") {
+                SettingsLink { Text("管理密钥") }
+            }
+        } else if detail.decrypted {
+            Banner(icon: "lock.fill", color: .green, text: "这封邮件是加密的，已用你的私钥解密")
+        } else if detail.encrypted {
+            Banner(icon: "lock.fill", color: .orange, text: "这是一封加密邮件，导入对应的私钥后才能阅读") {
+                SettingsLink { Text("管理密钥") }
+            }
+        }
+        if let sig = detail.signature {
+            Banner(icon: sig.valid ? "checkmark.seal.fill" : "xmark.seal.fill", color: sig.valid ? .green : .red,
+                   text: (sig.kind == "smime" ? "S/MIME：" : "PGP：") + sig.message)
+        }
         ForEach(detail.warnings, id: \.self) { w in
             Banner(icon: "exclamationmark.shield.fill", color: .red, text: w)
         }

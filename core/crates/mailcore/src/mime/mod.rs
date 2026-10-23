@@ -330,13 +330,34 @@ fn body_of(msg: &Message) -> Body {
         }
     }
     let root = part_mime(msg.root_part());
-    body.encrypted = root == "multipart/encrypted" || root == "application/pkcs7-mime" || root == "application/x-pkcs7-mime";
-    body.signed = root == "multipart/signed";
-    body.snippet = snippet(&plain);
+    let inline_pgp = plain.trim_start();
+    body.encrypted = root == "multipart/encrypted"
+        || root == "application/pkcs7-mime"
+        || root == "application/x-pkcs7-mime"
+        || inline_pgp.starts_with("-----BEGIN PGP MESSAGE-----");
+    body.signed = root == "multipart/signed" || inline_pgp.starts_with("-----BEGIN PGP SIGNED MESSAGE-----");
+    // Signature blobs and encrypted payloads are not attachments to show.
+    body.attachments.retain(|a| !CRYPTO_PARTS.contains(&a.mime_type.as_str()));
+    if body.encrypted {
+        // Decrypted only for display; nothing of an encrypted body goes into the index.
+        body.attachments.clear();
+        body.snippet = "🔒 加密邮件".into();
+        body.search_text = String::new();
+        return body;
+    }
+    let visible = match inline_pgp.strip_prefix("-----BEGIN PGP SIGNED MESSAGE-----") {
+        // Skip the armor header ("Hash: SHA256") up to the blank line.
+        Some(rest) => rest.split_once("\n\n").map(|(_, t)| t).unwrap_or(rest),
+        None => plain.as_str(),
+    };
+    body.snippet = snippet(visible);
     let names: Vec<&str> = body.attachments.iter().filter(|a| !a.inline).map(|a| a.filename.as_str()).collect();
     body.search_text = format!("{plain}\n{}", names.join(" "));
     body
 }
+
+const CRYPTO_PARTS: [&str; 4] =
+    ["application/pgp-signature", "application/pgp-encrypted", "application/pkcs7-signature", "application/x-pkcs7-signature"];
 
 /// Decoded bytes of attachment part `index` (as reported in [`Attachment::id`]).
 pub fn part_bytes(raw: &[u8], index: usize) -> Option<(String, String, Vec<u8>)> {

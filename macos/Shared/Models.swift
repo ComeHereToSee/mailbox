@@ -288,12 +288,16 @@ struct MessageDetail: Decodable, Identifiable, Hashable {
     var folderRole: FolderRole
     var encrypted: Bool
     var signed: Bool
+    var decrypted: Bool
+    var decryptError: String?
+    var signature: SignatureInfo?
 
     var id: Int64 { summary.id }
 
     private enum Keys: String, CodingKey {
         case cc, bcc, replyTo, messageId, inReplyTo, references, html, text, attachments, hasRemoteContent, allowRemote
         case trackers, unsubscribe, invite, readReceiptTo, warnings, bodyLoaded, folderRole, encrypted, signed
+        case decrypted, decryptError, signature
     }
 
     init(from decoder: Decoder) throws {
@@ -319,7 +323,40 @@ struct MessageDetail: Decodable, Identifiable, Hashable {
         folderRole = try c.decodeIfPresent(FolderRole.self, forKey: .folderRole) ?? .custom
         encrypted = try c.decodeIfPresent(Bool.self, forKey: .encrypted) ?? false
         signed = try c.decodeIfPresent(Bool.self, forKey: .signed) ?? false
+        decrypted = try c.decodeIfPresent(Bool.self, forKey: .decrypted) ?? false
+        decryptError = try c.decodeIfPresent(String.self, forKey: .decryptError)
+        signature = try c.decodeIfPresent(SignatureInfo.self, forKey: .signature)
     }
+}
+
+struct SignatureInfo: Codable, Hashable {
+    var kind: String = ""
+    var valid: Bool = false
+    var signer: String?
+    var keyId: String?
+    var message: String = ""
+}
+
+/// A PGP key or S/MIME certificate in the key store.
+struct KeyInfo: Codable, Hashable, Identifiable {
+    var id: String
+    var kind: String
+    var emails: [String] = []
+    var names: [String] = []
+    var hasSecret: Bool = false
+    var created: Int64 = 0
+    var expires: Int64?
+
+    var kindLabel: String { kind == "smime" ? "S/MIME" : "PGP" }
+    var shortId: String { String(id.suffix(16)) }
+    var expired: Bool { expires.map { $0 < Int64(Date().timeIntervalSince1970) } ?? false }
+}
+
+struct KeyImportRequest: Encodable {
+    var text: String?
+    var dataBase64: String?
+    var password: String?
+    var passphrase: String?
 }
 
 struct Identity: Codable, Hashable, Identifiable {
@@ -363,6 +400,8 @@ struct Draft: Codable, Hashable, Identifiable {
     var requestReadReceipt: Bool = false
     var priorityHigh: Bool = false
     var calendar: [String]?
+    var sign: Bool = false
+    var encrypt: Bool = false
     var updatedAt: Int64 = 0
 }
 
@@ -530,6 +569,9 @@ struct Settings: Codable, Hashable {
     var blockTrackers: Bool = true
     var spotlightIndex: Bool = true
     var appLock: Bool = false
+    var cryptoPrefer: String = "pgp"
+    var cryptoSignDefault: Bool = false
+    var cryptoAutoEncrypt: Bool = true
 }
 
 struct Provider: Codable, Hashable, Identifiable {

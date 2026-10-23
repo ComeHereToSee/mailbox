@@ -5,9 +5,9 @@ import UniformTypeIdentifiers
 @MainActor
 final class ComposeModel: ObservableObject {
     @Published var draft = Draft()
-    @Published var to: [EmailAddress] = []
-    @Published var cc: [EmailAddress] = []
-    @Published var bcc: [EmailAddress] = []
+    @Published var to: [EmailAddress] = [] { didSet { refreshCrypto() } }
+    @Published var cc: [EmailAddress] = [] { didSet { refreshCrypto() } }
+    @Published var bcc: [EmailAddress] = [] { didSet { refreshCrypto() } }
     @Published var showCc = false
     @Published var showBcc = false
     @Published var loaded = false
@@ -18,6 +18,12 @@ final class ComposeModel: ObservableObject {
     @Published var savedAt: Date?
     @Published var showSchedule = false
     @Published var scheduleDate = Date().addingTimeInterval(3600)
+    /// PGP / S/MIME keys known to the engine, and recipients that have none.
+    @Published var keys: [KeyInfo] = []
+    @Published var missingKeys: [String] = []
+    private var encryptTouched = false
+    private var autoEncrypt = false
+    private var cryptoTask: Task<Void, Never>?
 
     let editor = RichEditorController()
     private var dirty = false
@@ -71,6 +77,45 @@ final class ComposeModel: ObservableObject {
         editor.setHTML(draft.html)
         editor.onChange = { [weak self] in self?.markDirty() }
         loaded = true
+        await loadCrypto(state: state, isNew: req.draft == nil && req.editServerDraft == nil)
+    }
+
+    // MARK: - Signing / encryption
+
+    var cryptoAvailable: Bool { keys.contains { $0.hasSecret } }
+
+    private func loadCrypto(state: AppState, isNew: Bool) async {
+        keys = (try? await api.keys()) ?? []
+        guard cryptoAvailable else { return }
+        autoEncrypt = state.settings.cryptoAutoEncrypt
+        let sender = (state.identities.first { $0.id == draft.identityId }?.email
+            ?? state.accounts.first { $0.id == draft.accountId }?.email ?? "").lowercased()
+        let ownKey = keys.contains { $0.hasSecret && $0.emails.contains(sender) }
+        if isNew && ownKey && state.settings.cryptoSignDefault { draft.sign = true }
+        refreshCrypto()
+    }
+
+    /// Re-checks recipient keys; with auto-encrypt on, the lock follows whether everyone has one
+    /// until the user flips it by hand.
+    func refreshCrypto() {
+        guard loaded, cryptoAvailable else { return }
+        let all = (to + cc + bcc).map(\.email)
+        cryptoTask?.cancel()
+        cryptoTask = Task {
+            try? await Task.sleep(nanoseconds: 300_000_000)
+            guard !Task.isCancelled else { return }
+            let r = (try? await api.checkKeys(all)) ?? (have: [], missing: all)
+            guard !Task.isCancelled else { return }
+            missingKeys = r.missing
+            if autoEncrypt && !encryptTouched {
+                draft.encrypt = !all.isEmpty && r.missing.isEmpty
+            }
+        }
+    }
+
+    func toggleEncrypt() {
+        encryptTouched = true
+        draft.encrypt.toggle()
     }
 
     nonisolated static func escape(_ s: String) -> String {
@@ -382,6 +427,21 @@ struct ComposeWindow: View {
                 }
             } label: { Image(systemName: "ellipsis.circle") }
             .menuStyle(.borderlessButton).fixedSize()
+            if model.cryptoAvailable {
+                Toggle(isOn: $model.draft.sign) { Image(systemName: "signature") }
+                    .toggleStyle(.button)
+                    .help(model.draft.sign ? "将进行数字签名" : "数字签名")
+                Button { model.toggleEncrypt() } label: {
+                    Image(systemName: model.draft.encrypt ? "lock.fill" : "lock.open")
+                        .foregroundStyle(model.draft.encrypt ? (model.missingKeys.isEmpty ? Color.green : Color.red) : Color.secondary)
+                }
+                .buttonStyle(.borderless)
+                .help(model.draft.encrypt ? "将加密发送" : "加密")
+                if model.draft.encrypt && !model.missingKeys.isEmpty {
+                    Text("缺少公钥：\(model.missingKeys.joined(separator: "、"))")
+                        .font(.caption).foregroundStyle(.red).lineLimit(1).truncationMode(.tail)
+                }
+            }
             if let saved = model.savedAt {
                 Text("已保存 \(Fmt.timeOnly.string(from: saved))").font(.caption).foregroundStyle(.secondary)
             }

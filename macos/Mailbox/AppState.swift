@@ -455,6 +455,9 @@ final class AppState: ObservableObject {
             }
             compose(req)
         case "settings":
+            if let tab = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems?.first(where: { $0.name == "tab" })?.value {
+                UserDefaults.standard.set(tab, forKey: "settingsTab")
+            }
             WindowRouter.shared.showSettings()
         case "add-account":
             WindowRouter.shared.showMain()

@@ -413,6 +413,22 @@ pub struct MessageDetail {
     pub folder_role: FolderRole,
     pub encrypted: bool,
     pub signed: bool,
+    /// The message was encrypted and has been decrypted for display.
+    pub decrypted: bool,
+    pub decrypt_error: Option<String>,
+    pub signature: Option<SignatureInfo>,
+}
+
+/// Result of checking a PGP or S/MIME signature.
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, Default)]
+#[serde(default)]
+pub struct SignatureInfo {
+    /// `"pgp"` or `"smime"`.
+    pub kind: String,
+    pub valid: bool,
+    pub signer: Option<String>,
+    pub key_id: Option<String>,
+    pub message: String,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, Default)]
@@ -479,6 +495,9 @@ pub struct Draft {
     pub priority_high: bool,
     /// iMIP calendar part (method, ics) for invitation replies.
     pub calendar: Option<(String, String)>,
+    /// Sign / encrypt with PGP or S/MIME when sending.
+    pub sign: bool,
+    pub encrypt: bool,
     pub updated_at: i64,
 }
 
@@ -631,6 +650,12 @@ pub struct Settings {
     pub block_trackers: bool,
     pub spotlight_index: bool,
     pub app_lock: bool,
+    /// `"pgp"` or `"smime"`: which one to use when both could protect a message.
+    pub crypto_prefer: String,
+    /// New messages start with signing on (when the sender has a key).
+    pub crypto_sign_default: bool,
+    /// Encrypt automatically when every recipient has a key.
+    pub crypto_auto_encrypt: bool,
 }
 
 impl Default for Settings {
@@ -656,6 +681,9 @@ impl Default for Settings {
             block_trackers: true,
             spotlight_index: true,
             app_lock: false,
+            crypto_prefer: "pgp".into(),
+            crypto_sign_default: false,
+            crypto_auto_encrypt: true,
         }
     }
 }

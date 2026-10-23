@@ -95,13 +95,21 @@ impl Engine {
                 return Ok(d);
             }
         };
-        let (h, b) = mime::parse_full(&raw);
+        let (h, outer) = mime::parse_full(&raw);
+        let inc = self.unprotect(&raw, &m.summary.from.email);
+        let b = match &inc.inner {
+            Some(inner) => mime::parse_full(inner).1,
+            None => outer,
+        };
         d.body_loaded = true;
         d.attachments = b.attachments.clone();
         d.summary.has_attachments = b.attachments.iter().any(|a| !a.inline);
         d.text = b.text.clone();
-        d.encrypted = b.encrypted;
-        d.signed = b.signed;
+        d.encrypted = b.encrypted || inc.encrypted;
+        d.decrypted = inc.decrypted;
+        d.decrypt_error = inc.decrypt_error;
+        d.signed = b.signed || inc.signature.is_some();
+        d.signature = inc.signature.map(Into::into);
         d.read_receipt_to = h.read_receipt_to.clone();
         let html_src = b.html.clone().unwrap_or_else(|| html::text_to_html(b.text.as_deref().unwrap_or("")));
         let s = html::sanitize(&html_src, id, settings.block_trackers);
@@ -147,9 +155,16 @@ impl Engine {
         Ok(out)
     }
 
+    /// Raw message, or its decrypted inner entity when it is encrypted / signed.
+    async fn protected_view(&self, id: MessageId) -> Result<Vec<u8>> {
+        let raw = self.raw_message(id).await?;
+        let from = self.db.message(id)?.summary.from.email;
+        Ok(self.content_view(raw, &from))
+    }
+
     /// (filename, mime type, bytes) of an attachment.
     pub async fn attachment(&self, id: MessageId, attachment_id: i64) -> Result<(String, String, Vec<u8>)> {
-        let raw = self.raw_message(id).await?;
+        let raw = self.protected_view(id).await?;
         mime::part_bytes(&raw, attachment_id as usize).ok_or_else(|| Error::NotFound("附件不存在".into()))
     }
 
@@ -165,7 +180,7 @@ impl Engine {
     }
 
     pub async fn cid_part(&self, id: MessageId, cid: &str) -> Result<(String, Vec<u8>)> {
-        let raw = self.raw_message(id).await?;
+        let raw = self.protected_view(id).await?;
         mime::cid_bytes(&raw, cid).ok_or_else(|| Error::NotFound("内嵌图片不存在".into()))
     }
 

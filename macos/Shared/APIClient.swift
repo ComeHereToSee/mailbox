@@ -352,6 +352,31 @@ extension APIClient {
         var messageCount: Int
     }
     func storage() async throws -> StorageReport { try await get("/v1/storage") }
+
+    // MARK: PGP / S/MIME keys
+    func keys() async throws -> [KeyInfo] { try await get("/v1/keys") }
+    func importKey(_ req: KeyImportRequest) async throws -> KeyInfo { try await post("/v1/keys/import", req) }
+    func generateKey(name: String, email: String, passphrase: String?) async throws -> KeyInfo {
+        struct B: Encodable { var name: String; var email: String; var passphrase: String? }
+        return try await post("/v1/keys/generate", B(name: name, email: email, passphrase: passphrase))
+    }
+    func exportKey(_ id: String, secret: Bool = false) async throws -> String {
+        struct R: Decodable { var text: String }
+        let r: R = try await get("/v1/keys/\(id)/export", query: ["secret": secret ? "true" : "false"])
+        return r.text
+    }
+    func deleteKey(_ id: String) async throws { try await send("DELETE", "/v1/keys/\(id)") }
+    func setKeyPassphrase(_ id: String, _ passphrase: String?) async throws {
+        struct B: Encodable { var passphrase: String? }
+        try await send("POST", "/v1/keys/\(id)/passphrase", B(passphrase: passphrase))
+    }
+    /// (recipients with an encryption key, recipients without).
+    func checkKeys(_ recipients: [String]) async throws -> (have: [String], missing: [String]) {
+        struct B: Encodable { var recipients: [String] }
+        struct R: Decodable { var have: [String]; var missing: [String] }
+        let r: R = try await post("/v1/keys/check", B(recipients: recipients))
+        return (r.have, r.missing)
+    }
     func cleanup() async throws -> Int64 {
         struct R: Decodable { var freed: Int64 }
         let r: R = try await post("/v1/cleanup")

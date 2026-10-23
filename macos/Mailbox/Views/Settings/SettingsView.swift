@@ -4,20 +4,23 @@ import UniformTypeIdentifiers
 
 struct SettingsView: View {
     @EnvironmentObject private var state: AppState
+    /// Also set by `mailbox://settings?tab=…`.
+    @AppStorage("settingsTab") private var tab = "general"
 
     var body: some View {
-        TabView {
-            GeneralSettings().tabItem { Label("通用", systemImage: "gearshape") }
-            AccountsSettings().tabItem { Label("账户", systemImage: "person.crop.circle") }
-            NotificationSettings().tabItem { Label("通知", systemImage: "bell.badge") }
-            RulesSettings().tabItem { Label("规则", systemImage: "line.3.horizontal.decrease.circle") }
-            ComposeSettings().tabItem { Label("写信", systemImage: "square.and.pencil") }
-            ForwarderSettings().tabItem { Label("推送转发", systemImage: "iphone.radiowaves.left.and.right") }
-            PrivacySettings().tabItem { Label("隐私", systemImage: "hand.raised") }
-            AdvancedSettings().tabItem { Label("高级", systemImage: "wrench.and.screwdriver") }
+        TabView(selection: $tab) {
+            GeneralSettings().tabItem { Label("通用", systemImage: "gearshape") }.tag("general")
+            AccountsSettings().tabItem { Label("账户", systemImage: "person.crop.circle") }.tag("accounts")
+            NotificationSettings().tabItem { Label("通知", systemImage: "bell.badge") }.tag("notifications")
+            RulesSettings().tabItem { Label("规则", systemImage: "line.3.horizontal.decrease.circle") }.tag("rules")
+            ComposeSettings().tabItem { Label("写信", systemImage: "square.and.pencil") }.tag("compose")
+            ForwarderSettings().tabItem { Label("推送转发", systemImage: "iphone.radiowaves.left.and.right") }.tag("forwarders")
+            PrivacySettings().tabItem { Label("隐私", systemImage: "hand.raised") }.tag("privacy")
+            CryptoSettings().tabItem { Label("加密", systemImage: "lock.shield") }.tag("crypto")
+            AdvancedSettings().tabItem { Label("高级", systemImage: "wrench.and.screwdriver") }.tag("advanced")
         }
         .environmentObject(state)
-        .frame(width: 760, height: 560)
+        .frame(width: 800, height: 560)
     }
 }
 

@@ -104,6 +104,23 @@
 
 `Draft.attachments[]`：`{path}`（本地文件）或 `{message_id, attachment_id}`（转发原邮件附件）；HTML 中的 `data:` 图片会自动转成内嵌图片。
 
+`Draft.sign` / `Draft.encrypt`：发送时用 PGP 或 S/MIME 签名 / 加密（`Settings.crypto_prefer` 决定两者都可用时选哪个）。要求加密但有收件人缺公钥时，`/v1/send` 直接返回 400 并列出这些地址。
+
+### 加密密钥（PGP / S/MIME）
+密钥和私钥口令只保存在加密的 `secrets.bin` 中，不写入数据库。
+
+| 方法 | 路径 | 说明 |
+|---|---|---|
+| GET | `/v1/keys` | `[KeyInfo]`：`{id, kind: pgp\|smime, emails, names, has_secret, created, expires}` |
+| POST | `/v1/keys/import` | `{text?}`（PGP 公钥 / 私钥、PEM 证书）或 `{data_base64, password?}`（.p12 / .pfx / DER）；`passphrase?` 同时保存私钥口令 |
+| POST | `/v1/keys/generate` | `{name, email, passphrase?}` 生成 Ed25519 + X25519 的 PGP 密钥 |
+| POST | `/v1/keys/check` | `{recipients}` → `{have, missing}`（写信时的加密开关用） |
+| GET | `/v1/keys/{id}/export?secret=` | `{text}`：公钥 / 证书，或私钥 |
+| POST | `/v1/keys/{id}/passphrase` | `{passphrase}`（空则清除） |
+| DELETE | `/v1/keys/{id}` | |
+
+`MessageDetail` 中的相关字段：`encrypted`、`decrypted`、`decrypt_error`、`signed`、`signature: {kind, valid, signer, key_id, message}`。收到带证书的有效 S/MIME 签名时，对方证书会自动加入密钥列表。加密邮件不会解密写入搜索索引，列表摘要显示“🔒 加密邮件”。
+
 ### 联系人 / 规则 / 其他
 | 方法 | 路径 | 说明 |
 |---|---|---|

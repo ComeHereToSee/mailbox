@@ -64,12 +64,15 @@ jobs:
           open "mailbox://compose?to=lisi@corp-demo.cn&subject=%E4%BC%9A%E8%AE%AE%E7%BA%AA%E8%A6%81&body=%E4%BD%A0%E5%A5%BD"
           sleep 8
           screencapture -x /tmp/shots/2-compose.png || true
-          open "mailbox://settings"
+          open "mailbox://settings?tab=general"
           sleep 5
           screencapture -x /tmp/shots/3-settings.png || true
           open "mailbox://add-account"
           sleep 5
           screencapture -x /tmp/shots/4-add-account.png || true
+          open "mailbox://settings?tab=crypto"
+          sleep 5
+          screencapture -x /tmp/shots/5-crypto.png || true
           tail -30 /tmp/app.log || true
           tail -30 "$HOME/Library/Application Support/Mailbox/logs/mailcore.log" || true
       - name: Upload screenshots

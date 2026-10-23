@@ -118,6 +118,7 @@ impl Engine {
                 return Err(Error::Invalid(format!("收件人地址无效: {}", a.email)));
             }
         }
+        self.check_protection(&d)?;
         if d.id.is_empty() {
             d.id = uuid::Uuid::new_v4().to_string();
         }
@@ -197,7 +198,6 @@ impl Engine {
     async fn deliver(&self, item: &OutboxItem) -> Result<()> {
         let d = self.db.outbox_draft(&item.id)?;
         let (acc, o) = self.build_outgoing(&d, false).await?;
-        let raw = build::build(&o, false)?;
         let mut recipients: Vec<String> = Vec::new();
         for a in o.to.iter().chain(o.cc.iter()).chain(o.bcc.iter()) {
             let e = a.email.trim().to_lowercase();
@@ -205,13 +205,16 @@ impl Engine {
                 recipients.push(e);
             }
         }
+        let raw = self.protect(&d, &o.from.email, &recipients, build::build(&o, false)?)?;
         let server = acc.config.smtp.clone().ok_or_else(|| Error::Invalid("未配置 SMTP 服务器".into()))?;
         let auth = self.smtp_auth(&acc).await?;
         let user = Self::login_name(&acc, &server);
         crate::smtp::send(&server, &user, &auth, &o.from.email, &recipients, &raw).await?;
 
         // Bookkeeping after a successful send; failures here must not resend.
-        let copy = build::build(&o, true).unwrap_or(raw);
+        let copy = build::build(&o, true)
+            .and_then(|c| self.protect(&d, &o.from.email, &recipients, c))
+            .unwrap_or(raw);
         let _ = self.db.record_contacts(&[o.to.clone(), o.cc.clone(), o.bcc.clone()].concat(), 3);
         if let Err(err) = self.store_sent_copy(&acc, &copy).await {
             tracing::warn!(error = %err, "could not store sent copy");

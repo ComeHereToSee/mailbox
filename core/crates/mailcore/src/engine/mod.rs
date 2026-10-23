@@ -7,6 +7,7 @@ mod demo;
 mod detail;
 mod extras;
 mod imap_worker;
+mod keys;
 mod newmail;
 mod ops;
 mod pop_worker;
@@ -14,6 +15,7 @@ mod send;
 
 pub use accounts::{AccountTest, NewAccount, TestReport};
 pub use actions::{Action, ActionResult};
+pub use keys::KeyImport;
 pub use send::UnsubscribeResult;
 
 use crate::error::{Error, Result};

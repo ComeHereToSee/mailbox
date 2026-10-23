@@ -80,9 +80,21 @@ async fn api_flow() {
 
     let list = c.get("/v1/messages?mailbox=unified:inbox&threads=false").await;
     let msgs = list["messages"].as_array().unwrap();
-    assert_eq!(msgs.len(), 10);
+    assert_eq!(msgs.len(), 11);
     let first = &msgs[0];
-    assert!(first["subject"].as_str().is_some() && first["snippet"].as_str().unwrap().len() > 3);
+    assert!(first["subject"].as_str().is_some() && first["snippet"].as_str().unwrap().len() > 3, "{first}");
+
+    // The signed + encrypted demo message is decrypted and verified for display.
+    let secure = msgs.iter().find(|m| m["subject"].as_str().unwrap().contains("蓝鲸")).unwrap();
+    let d = c.get(&format!("/v1/messages/{}", secure["id"])).await;
+    assert_eq!(d["decrypted"], true, "{d}");
+    assert_eq!(d["signature"]["valid"], true, "{d}");
+    assert!(d["html"].as_str().unwrap().contains("320 万"));
+    let keys = c.get("/v1/keys").await;
+    assert_eq!(keys.as_array().unwrap().len(), 2, "{keys}");
+    assert_eq!(keys.as_array().unwrap().iter().filter(|k| k["has_secret"] == true).count(), 1);
+    let check = c.post("/v1/keys/check", json!({"recipients": ["李四 <lisi@corp-demo.cn>", "x@y.z"]})).await;
+    assert_eq!(check["missing"], json!(["x@y.z"]));
 
     let found = c.get(&format!("/v1/messages?q={}", urlencode("纪要"))).await;
     assert_eq!(found["messages"].as_array().unwrap().len(), 1);
