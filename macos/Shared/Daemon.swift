@@ -82,6 +82,18 @@ enum Fmt {
         return fullDate.string(from: date)
     }
 
+    /// Compact date and time for message headers; the full form goes in the tooltip.
+    static func short(_ ts: Int64) -> String {
+        let date = Date(timeIntervalSince1970: TimeInterval(ts))
+        let cal = Calendar.current
+        if cal.isDateInToday(date) { return "今天 " + timeOnly.string(from: date) }
+        if cal.isDateInYesterday(date) { return "昨天 " + timeOnly.string(from: date) }
+        if cal.component(.year, from: date) == cal.component(.year, from: Date()) {
+            return monthDayTime.string(from: date)
+        }
+        return fullDateTime.string(from: date)
+    }
+
     static func full(_ ts: Int64) -> String {
         fullDateTime.string(from: Date(timeIntervalSince1970: TimeInterval(ts)))
     }
@@ -102,4 +114,5 @@ enum Fmt {
     static let monthDay = make("M月d日")
     static let fullDate = make("yyyy/M/d")
     static let fullDateTime = make("yyyy年M月d日 EEEE HH:mm")
+    static let monthDayTime = make("M月d日 HH:mm")
 }

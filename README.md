@@ -6,6 +6,14 @@
 
 > 这是**无 AI 版**。带 AI 功能（润色、摘要、自动回复、Loop、Claude Code / Codex 订阅接入等）的版本在 [ComeHereToSee/mailbox-ai](https://github.com/ComeHereToSee/mailbox-ai)。
 
+![主界面](docs/screenshots/main.png)
+
+| 写信 | 设置 | 添加账户 |
+|---|---|---|
+| ![写信](docs/screenshots/compose.png) | ![设置](docs/screenshots/settings.png) | ![添加账户](docs/screenshots/add-account.png) |
+
+<sub>截图由 CI 在 macOS 15 上用演示数据（`--demo`）自动拍摄。</sub>
+
 ## 特点
 
 - **原生又轻**：SwiftUI 界面 + Rust 核心。后台 Helper 常驻菜单栏负责收信，主窗口关掉也照常提醒。

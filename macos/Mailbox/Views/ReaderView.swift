@@ -266,8 +266,9 @@ struct MessageCard: View {
             }
             Spacer()
             VStack(alignment: .trailing, spacing: 4) {
-                Text(Fmt.full(detail.summary.date)).font(.caption).foregroundStyle(.secondary)
+                Text(Fmt.short(detail.summary.date)).font(.caption).foregroundStyle(.secondary)
                     .lineLimit(1).fixedSize()
+                    .help(Fmt.full(detail.summary.date))
                 HStack(spacing: 6) {
                     if detail.encrypted { Image(systemName: "lock.fill").help("加密邮件") }
                     if detail.signed { Image(systemName: "checkmark.seal").help("已签名") }
