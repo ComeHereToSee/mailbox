@@ -1,0 +1,7 @@
+/core/target/
+/macos/build/
+/macos/*.xcodeproj/
+/macos/Vendor/
+/dist/
+.DS_Store
+*.swp

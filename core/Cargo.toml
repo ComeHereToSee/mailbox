@@ -1,0 +1,14 @@
+[workspace]
+resolver = "2"
+members = ["crates/mailcore", "crates/mailcore-ffi", "crates/mailboxd"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+license = "MIT"
+
+[profile.release]
+opt-level = "s"
+lto = "thin"
+codegen-units = 4
+strip = "debuginfo"
