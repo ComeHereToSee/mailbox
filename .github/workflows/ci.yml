@@ -52,23 +52,32 @@ jobs:
           rustup target add aarch64-apple-darwin x86_64-apple-darwin
       - name: Build app and DMG
         run: scripts/build-macos.sh
-      - name: Screenshot with demo data
+      - name: Screenshots with demo data
         if: success()
-        timeout-minutes: 5
+        timeout-minutes: 6
         run: |
           APP="$PWD/macos/build/DerivedData/Build/Products/Release/Mailbox.app"
-          export MAILBOX_KEY_FILE=1
+          mkdir -p /tmp/shots
           "$APP/Contents/MacOS/Mailbox" --demo > /tmp/app.log 2>&1 &
           sleep 30
-          screencapture -x /tmp/shot.png || true
+          screencapture -x /tmp/shots/1-main.png || true
+          open "mailbox://compose?to=lisi@corp-demo.cn&subject=%E4%BC%9A%E8%AE%AE%E7%BA%AA%E8%A6%81&body=%E4%BD%A0%E5%A5%BD"
+          sleep 8
+          screencapture -x /tmp/shots/2-compose.png || true
+          open "mailbox://settings"
+          sleep 5
+          screencapture -x /tmp/shots/3-settings.png || true
+          open "mailbox://add-account"
+          sleep 5
+          screencapture -x /tmp/shots/4-add-account.png || true
           tail -30 /tmp/app.log || true
           tail -30 "$HOME/Library/Application Support/Mailbox/logs/mailcore.log" || true
-      - name: Upload screenshot
+      - name: Upload screenshots
         if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: screenshot
-          path: /tmp/shot.png
+          name: screenshots
+          path: /tmp/shots
           if-no-files-found: ignore
       - name: Upload build log
         if: always()

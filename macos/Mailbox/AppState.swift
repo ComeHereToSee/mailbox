@@ -454,6 +454,12 @@ final class AppState: ObservableObject {
                 }
             }
             compose(req)
+        case "settings":
+            NSApp.activate(ignoringOtherApps: true)
+            NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
+        case "add-account":
+            WindowRouter.shared.showMain()
+            showAddAccount = true
         default:
             WindowRouter.shared.showMain()
         }
