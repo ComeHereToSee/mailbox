@@ -51,6 +51,8 @@ targets:
         NSRemindersFullAccessUsageDescription: Mailbox 需要访问提醒事项，以便从邮件创建待办提醒。
         NSContactsUsageDescription: Mailbox 使用通讯录补全收件人。
         NSUserActivityTypes: [com.comeheretosee.mailbox.message]
+        NSAppTransportSecurity:
+          NSAllowsLocalNetworking: true
         NSServices:
           - NSMenuItem:
               default: 用 Mailbox 发送
@@ -91,6 +93,8 @@ targets:
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         LSUIElement: true
         LSMinimumSystemVersion: "14.0"
+        NSAppTransportSecurity:
+          NSAllowsLocalNetworking: true
         LSBackgroundOnly: false
         CFBundleURLTypes: []
     settings:
