@@ -13,6 +13,7 @@ jobs:
   core:
     name: Rust core (Linux, Dovecot + GreenMail)
     runs-on: ubuntu-24.04
+    timeout-minutes: 30
     env:
       MAILBOX_TEST_SERVERS: "1"
       MAILBOX_TEST_ENV: /tmp/mailbox-test-env
@@ -37,6 +38,7 @@ jobs:
   macos:
     name: macOS app
     runs-on: macos-15
+    timeout-minutes: 50
     steps:
       - uses: actions/checkout@v4
       - uses: Swatinem/rust-cache@v2
@@ -51,6 +53,7 @@ jobs:
         run: scripts/build-macos.sh
       - name: Screenshot with demo data
         if: success()
+        timeout-minutes: 5
         run: |
           APP="$PWD/macos/build/DerivedData/Build/Products/Release/Mailbox.app"
           export MAILBOX_KEY_FILE=1
