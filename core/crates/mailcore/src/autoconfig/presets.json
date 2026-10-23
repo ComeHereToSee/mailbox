@@ -1,0 +1,731 @@
+[
+  {
+    "id": "qq",
+    "name": "QQ 邮箱",
+    "label": "QQ",
+    "color": "#12B7F5",
+    "domains": ["qq.com", "foxmail.com", "vip.qq.com"],
+    "mx_patterns": ["mx1.qq.com", "mx2.qq.com", "mx3.qq.com"],
+    "imap": { "host": "imap.qq.com", "port": 993, "security": "tls" },
+    "pop3": { "host": "pop.qq.com", "port": 995, "security": "tls" },
+    "smtp": { "host": "smtp.qq.com", "port": 465, "security": "tls" },
+    "alt_smtp": [{ "host": "smtp.qq.com", "port": 587, "security": "start_tls" }],
+    "password_label": "授权码",
+    "help_url": "https://service.mail.qq.com/detail/0/75",
+    "web_url": "https://wx.mail.qq.com/",
+    "help_steps": [
+      "登录网页版 QQ 邮箱",
+      "点击右上角「设置」→「账号与安全」→「安全设置」",
+      "开启「POP3/IMAP/SMTP/Exchange/CardDAV 服务」",
+      "点击「生成授权码」，按提示用微信扫码或短信验证",
+      "复制 16 位授权码，粘贴到右侧密码框"
+    ],
+    "notes": "QQ 邮箱和 Foxmail 邮箱都必须使用授权码登录，不能使用 QQ 密码；修改 QQ 密码后已生成的授权码会失效。若「已发送」中出现重复邮件，可在本应用中关闭「保存已发送副本」。"
+  },
+  {
+    "id": "163",
+    "name": "网易 163 邮箱",
+    "label": "163",
+    "color": "#D7000F",
+    "domains": ["163.com"],
+    "imap": { "host": "imap.163.com", "port": 993, "security": "tls" },
+    "pop3": { "host": "pop.163.com", "port": 995, "security": "tls" },
+    "smtp": { "host": "smtp.163.com", "port": 465, "security": "tls" },
+    "alt_smtp": [{ "host": "smtp.163.com", "port": 994, "security": "tls" }],
+    "password_label": "授权码",
+    "help_url": "https://help.mail.163.com/",
+    "web_url": "https://mail.163.com/",
+    "help_steps": [
+      "登录网页版 163 邮箱",
+      "点击顶部「设置」→「POP3/SMTP/IMAP」",
+      "开启「IMAP/SMTP 服务」，按提示完成手机验证",
+      "新增授权密码并复制（只显示一次）",
+      "把授权码粘贴到右侧密码框"
+    ],
+    "notes": "网易邮箱必须使用客户端授权码登录，网页登录密码无效；授权码只显示一次，遗失后需重新生成。"
+  },
+  {
+    "id": "126",
+    "name": "网易 126 邮箱",
+    "label": "126",
+    "color": "#2E9F40",
+    "domains": ["126.com"],
+    "imap": { "host": "imap.126.com", "port": 993, "security": "tls" },
+    "pop3": { "host": "pop.126.com", "port": 995, "security": "tls" },
+    "smtp": { "host": "smtp.126.com", "port": 465, "security": "tls" },
+    "alt_smtp": [{ "host": "smtp.126.com", "port": 994, "security": "tls" }],
+    "password_label": "授权码",
+    "help_url": "https://help.mail.163.com/",
+    "web_url": "https://mail.126.com/",
+    "help_steps": [
+      "登录网页版 126 邮箱",
+      "点击顶部「设置」→「POP3/SMTP/IMAP」",
+      "开启「IMAP/SMTP 服务」，按提示完成手机验证",
+      "新增授权密码并复制（只显示一次）",
+      "把授权码粘贴到右侧密码框"
+    ],
+    "notes": "网易邮箱必须使用客户端授权码登录，网页登录密码无效；授权码只显示一次，遗失后需重新生成。"
+  },
+  {
+    "id": "yeah",
+    "name": "网易 yeah.net 邮箱",
+    "label": "Yeah",
+    "color": "#3871D4",
+    "domains": ["yeah.net"],
+    "imap": { "host": "imap.yeah.net", "port": 993, "security": "tls" },
+    "pop3": { "host": "pop.yeah.net", "port": 995, "security": "tls" },
+    "smtp": { "host": "smtp.yeah.net", "port": 465, "security": "tls" },
+    "alt_smtp": [{ "host": "smtp.yeah.net", "port": 994, "security": "tls" }],
+    "password_label": "授权码",
+    "help_url": "https://help.mail.163.com/",
+    "web_url": "https://mail.yeah.net/",
+    "help_steps": [
+      "登录网页版 yeah.net 邮箱",
+      "点击顶部「设置」→「POP3/SMTP/IMAP」",
+      "开启「IMAP/SMTP 服务」，按提示完成手机验证",
+      "新增授权密码并复制（只显示一次）",
+      "把授权码粘贴到右侧密码框"
+    ],
+    "notes": "网易邮箱必须使用客户端授权码登录，网页登录密码无效；授权码只显示一次，遗失后需重新生成。"
+  },
+  {
+    "id": "188",
+    "name": "网易 188 财富邮",
+    "label": "188",
+    "color": "#C9A063",
+    "domains": ["188.com"],
+    "imap": { "host": "imap.188.com", "port": 993, "security": "tls" },
+    "pop3": { "host": "pop.188.com", "port": 995, "security": "tls" },
+    "smtp": { "host": "smtp.188.com", "port": 465, "security": "tls" },
+    "alt_smtp": [{ "host": "smtp.188.com", "port": 994, "security": "tls" }],
+    "password_label": "授权码",
+    "help_url": "https://help.mail.163.com/",
+    "web_url": "https://www.188.com/",
+    "help_steps": [
+      "登录网页版 188 邮箱",
+      "点击顶部「设置」→「POP3/SMTP/IMAP」",
+      "开启「IMAP/SMTP 服务」，按提示完成手机验证",
+      "新增授权密码并复制（只显示一次）",
+      "把授权码粘贴到右侧密码框"
+    ],
+    "notes": "网易邮箱必须使用客户端授权码登录，网页登录密码无效；授权码只显示一次，遗失后需重新生成。"
+  },
+  {
+    "id": "vip163",
+    "name": "网易 VIP 163 邮箱",
+    "label": "VIP163",
+    "color": "#B8924A",
+    "domains": ["vip.163.com"],
+    "imap": { "host": "imap.vip.163.com", "port": 993, "security": "tls" },
+    "pop3": { "host": "pop.vip.163.com", "port": 995, "security": "tls" },
+    "smtp": { "host": "smtp.vip.163.com", "port": 465, "security": "tls" },
+    "alt_smtp": [{ "host": "smtp.vip.163.com", "port": 994, "security": "tls" }],
+    "password_label": "授权码",
+    "help_url": "https://help.mail.163.com/",
+    "web_url": "https://vip.163.com/",
+    "help_steps": [
+      "登录网页版 VIP 163 邮箱",
+      "点击顶部「设置」→「POP3/SMTP/IMAP」",
+      "开启「IMAP/SMTP 服务」，按提示完成手机验证",
+      "新增授权密码并复制（只显示一次）",
+      "把授权码粘贴到右侧密码框"
+    ],
+    "notes": "网易邮箱必须使用客户端授权码登录，网页登录密码无效；授权码只显示一次，遗失后需重新生成。"
+  },
+  {
+    "id": "vip126",
+    "name": "网易 VIP 126 邮箱",
+    "label": "VIP126",
+    "color": "#A8843F",
+    "domains": ["vip.126.com"],
+    "imap": { "host": "imap.vip.126.com", "port": 993, "security": "tls" },
+    "pop3": { "host": "pop.vip.126.com", "port": 995, "security": "tls" },
+    "smtp": { "host": "smtp.vip.126.com", "port": 465, "security": "tls" },
+    "alt_smtp": [{ "host": "smtp.vip.126.com", "port": 994, "security": "tls" }],
+    "password_label": "授权码",
+    "help_url": "https://help.mail.163.com/",
+    "web_url": "https://vip.126.com/",
+    "help_steps": [
+      "登录网页版 VIP 126 邮箱",
+      "点击顶部「设置」→「POP3/SMTP/IMAP」",
+      "开启「IMAP/SMTP 服务」，按提示完成手机验证",
+      "新增授权密码并复制（只显示一次）",
+      "把授权码粘贴到右侧密码框"
+    ],
+    "notes": "网易邮箱必须使用客户端授权码登录，网页登录密码无效；授权码只显示一次，遗失后需重新生成。"
+  },
+  {
+    "id": "gmail",
+    "name": "Gmail",
+    "label": "Gmail",
+    "color": "#EA4335",
+    "domains": ["gmail.com", "googlemail.com"],
+    "mx_patterns": ["aspmx.l.google.com", "smtp.google.com", "googlemail.com", "google.com"],
+    "imap": { "host": "imap.gmail.com", "port": 993, "security": "tls" },
+    "pop3": { "host": "pop.gmail.com", "port": 995, "security": "tls" },
+    "smtp": { "host": "smtp.gmail.com", "port": 465, "security": "tls" },
+    "alt_smtp": [{ "host": "smtp.gmail.com", "port": 587, "security": "start_tls" }],
+    "auth": "oauth2",
+    "oauth_provider": "google",
+    "password_label": "应用专用密码",
+    "help_url": "https://support.google.com/accounts/answer/185833",
+    "web_url": "https://mail.google.com/",
+    "help_steps": [
+      "推荐直接点击「使用 Google 登录」完成授权",
+      "如需使用密码：先为 Google 账号开启两步验证",
+      "打开 myaccount.google.com/apppasswords，输入应用名称（如 Mailbox）创建应用专用密码",
+      "复制 16 位应用专用密码（不含空格），粘贴到右侧密码框"
+    ],
+    "save_sent_copy": false,
+    "notes": "Google 登录（OAuth2）需要在设置中填写你自己的 Google OAuth 客户端 ID；也可以开启两步验证后改用应用专用密码。Google Workspace 自定义域名同样适用。Gmail 会自动保存经 SMTP 发出的邮件，无需再保存副本。中国大陆访问 Gmail 需要可用的网络代理。"
+  },
+  {
+    "id": "outlook",
+    "name": "Outlook.com / Hotmail",
+    "label": "Outlook",
+    "color": "#0078D4",
+    "domains": [
+      "outlook.com", "hotmail.com", "live.com", "msn.com", "windowslive.com", "live.cn",
+      "outlook.at", "outlook.be", "outlook.cl", "outlook.cz", "outlook.de", "outlook.dk", "outlook.es", "outlook.fr",
+      "outlook.hu", "outlook.ie", "outlook.in", "outlook.it", "outlook.jp", "outlook.kr", "outlook.lv", "outlook.my",
+      "outlook.ph", "outlook.pt", "outlook.sa", "outlook.sg", "outlook.sk", "outlook.co.id", "outlook.co.il",
+      "outlook.co.th", "outlook.com.ar", "outlook.com.au", "outlook.com.br", "outlook.com.gr", "outlook.com.tr",
+      "outlook.com.vn",
+      "hotmail.be", "hotmail.ca", "hotmail.cl", "hotmail.cz", "hotmail.de", "hotmail.dk", "hotmail.es", "hotmail.fi",
+      "hotmail.fr", "hotmail.gr", "hotmail.hu", "hotmail.it", "hotmail.lt", "hotmail.lv", "hotmail.my", "hotmail.nl",
+      "hotmail.no", "hotmail.ph", "hotmail.rs", "hotmail.se", "hotmail.sg", "hotmail.sk", "hotmail.co.id",
+      "hotmail.co.il", "hotmail.co.in", "hotmail.co.jp", "hotmail.co.kr", "hotmail.co.th", "hotmail.co.uk",
+      "hotmail.co.za", "hotmail.com.ar", "hotmail.com.au", "hotmail.com.br", "hotmail.com.hk", "hotmail.com.tr",
+      "hotmail.com.tw", "hotmail.com.vn",
+      "live.at", "live.be", "live.ca", "live.cl", "live.de", "live.dk", "live.fi", "live.fr", "live.hk", "live.ie",
+      "live.in", "live.it", "live.jp", "live.nl", "live.no", "live.ru", "live.se", "live.co.jp", "live.co.kr",
+      "live.co.uk", "live.co.za", "live.com.ar", "live.com.au", "live.com.mx", "live.com.my", "live.com.ph",
+      "live.com.pt", "live.com.sg", "livemail.tw"
+    ],
+    "mx_patterns": ["olc.protection.outlook.com"],
+    "imap": { "host": "outlook.office365.com", "port": 993, "security": "tls" },
+    "pop3": { "host": "outlook.office365.com", "port": 995, "security": "tls" },
+    "smtp": { "host": "smtp-mail.outlook.com", "port": 587, "security": "start_tls" },
+    "auth": "oauth2",
+    "oauth_provider": "microsoft",
+    "password_label": "密码",
+    "help_url": "https://support.microsoft.com/office/pop-imap-and-smtp-settings-for-outlook-com-d088b986-291d-42b8-9564-9c414e2aa040",
+    "web_url": "https://outlook.live.com/mail/",
+    "help_steps": [
+      "点击「使用 Microsoft 账号登录」完成授权",
+      "如提示无法收信：登录 Outlook 网页版，进入「设置」→「邮件」→「转发和 IMAP」",
+      "打开「允许设备和应用使用 IMAP」（使用 POP 时打开对应开关）并保存"
+    ],
+    "save_sent_copy": false,
+    "notes": "微软已停用 Outlook.com 的密码（基本身份验证）登录，必须使用 Microsoft 账号 OAuth2 授权；POP/IMAP 访问默认关闭，需要先在网页版设置中开启。Outlook.com 会自动保存经 SMTP 发出的邮件。"
+  },
+  {
+    "id": "office365",
+    "name": "Microsoft 365（Office 365）",
+    "label": "Office 365",
+    "color": "#D83B01",
+    "domains": ["*.onmicrosoft.com"],
+    "mx_patterns": ["mail.protection.outlook.com"],
+    "imap": { "host": "outlook.office365.com", "port": 993, "security": "tls" },
+    "pop3": { "host": "outlook.office365.com", "port": 995, "security": "tls" },
+    "smtp": { "host": "smtp.office365.com", "port": 587, "security": "start_tls" },
+    "auth": "oauth2",
+    "oauth_provider": "microsoft",
+    "password_label": "密码",
+    "help_url": "https://learn.microsoft.com/exchange/clients-and-mobile-in-exchange-online/pop3-and-imap4/pop3-and-imap4",
+    "web_url": "https://outlook.office.com/mail/",
+    "help_steps": [
+      "点击「使用 Microsoft 账号登录」，用工作或学校账号完成授权",
+      "如提示需要管理员批准，请联系组织 IT 管理员允许本应用访问",
+      "如无法收发信，请管理员为你的邮箱启用 IMAP（或 POP）和「经身份验证的 SMTP」"
+    ],
+    "save_sent_copy": false,
+    "notes": "Exchange Online 已停用密码（基本身份验证）登录，必须使用 OAuth2；部分组织需要管理员批准第三方应用，并为邮箱启用 IMAP/POP 和 SMTP AUTH。由世纪互联运营的中国区 Microsoft 365 不适用此预设。"
+  },
+  {
+    "id": "icloud",
+    "name": "iCloud 邮件",
+    "label": "iCloud",
+    "color": "#3693F3",
+    "domains": ["icloud.com", "me.com", "mac.com"],
+    "mx_patterns": ["mail.icloud.com"],
+    "imap": { "host": "imap.mail.me.com", "port": 993, "security": "tls" },
+    "smtp": { "host": "smtp.mail.me.com", "port": 587, "security": "start_tls" },
+    "password_label": "应用专用密码",
+    "help_url": "https://support.apple.com/zh-cn/102654",
+    "web_url": "https://www.icloud.com/mail",
+    "help_steps": [
+      "打开 account.apple.com 并登录 Apple 账户（需已开启双重认证）",
+      "进入「登录与安全」→「App 专用密码」，点击生成",
+      "输入名称（如 Mailbox），复制形如 xxxx-xxxx-xxxx-xxxx 的密码",
+      "把 App 专用密码粘贴到右侧密码框"
+    ],
+    "notes": "iCloud 邮件不支持 POP3，必须使用 App 专用密码。用户名默认使用完整邮箱地址；若 IMAP 登录失败，可改为 @ 前的用户名。使用自定义域名时，用户名请填写你的 iCloud 邮箱地址。"
+  },
+  {
+    "id": "yahoo",
+    "name": "Yahoo 邮箱",
+    "label": "Yahoo",
+    "color": "#6001D2",
+    "domains": [
+      "yahoo.com", "yahoo.ca", "yahoo.de", "yahoo.it", "yahoo.fr", "yahoo.es", "yahoo.se", "yahoo.co.in",
+      "yahoo.co.uk", "yahoo.co.nz", "yahoo.com.au", "yahoo.com.ar", "yahoo.com.br", "yahoo.com.mx",
+      "yahoo.com.hk", "yahoo.com.tw", "yahoo.com.sg", "ymail.com", "myyahoo.com", "rocketmail.com"
+    ],
+    "imap": { "host": "imap.mail.yahoo.com", "port": 993, "security": "tls" },
+    "pop3": { "host": "pop.mail.yahoo.com", "port": 995, "security": "tls" },
+    "smtp": { "host": "smtp.mail.yahoo.com", "port": 465, "security": "tls" },
+    "alt_smtp": [{ "host": "smtp.mail.yahoo.com", "port": 587, "security": "start_tls" }],
+    "password_label": "应用专用密码",
+    "help_url": "https://help.yahoo.com/kb/SLN15241.html",
+    "web_url": "https://mail.yahoo.com/",
+    "help_steps": [
+      "登录 Yahoo 账户，打开「账户安全」页面",
+      "点击「生成应用密码」（Generate app password）",
+      "输入应用名称（如 Mailbox）并生成",
+      "复制生成的应用密码，粘贴到右侧密码框"
+    ],
+    "notes": "Yahoo 不允许第三方客户端使用账户登录密码，请使用应用密码。"
+  },
+  {
+    "id": "aol",
+    "name": "AOL Mail",
+    "label": "AOL",
+    "color": "#3D5AFE",
+    "domains": [
+      "aol.com", "aim.com", "aol.de", "aol.it", "aol.fr", "aol.es", "aol.se", "aol.co.uk", "aol.co.nz",
+      "aol.com.au", "aol.com.ar", "aol.com.br", "aol.com.mx", "netscape.net", "netscape.com", "compuserve.com",
+      "cs.com", "wmconnect.com"
+    ],
+    "imap": { "host": "imap.aol.com", "port": 993, "security": "tls" },
+    "pop3": { "host": "pop.aol.com", "port": 995, "security": "tls" },
+    "smtp": { "host": "smtp.aol.com", "port": 465, "security": "tls" },
+    "alt_smtp": [{ "host": "smtp.aol.com", "port": 587, "security": "start_tls" }],
+    "password_label": "应用专用密码",
+    "help_url": "https://help.aol.com/articles/Create-and-manage-app-password",
+    "web_url": "https://mail.aol.com/",
+    "help_steps": [
+      "登录 AOL 账户，打开「账户安全」页面",
+      "点击「生成应用密码」（Generate app password）",
+      "输入应用名称（如 Mailbox）并生成",
+      "复制生成的应用密码，粘贴到右侧密码框"
+    ],
+    "notes": "AOL 不允许第三方客户端使用账户登录密码，请使用应用密码。"
+  },
+  {
+    "id": "proton",
+    "name": "Proton Mail",
+    "label": "Proton",
+    "color": "#6D4AFF",
+    "domains": ["proton.me", "protonmail.com", "protonmail.ch", "pm.me"],
+    "mx_patterns": ["protonmail.ch"],
+    "imap": { "host": "127.0.0.1", "port": 1143, "security": "start_tls", "accept_invalid_certs": true },
+    "smtp": { "host": "127.0.0.1", "port": 1025, "security": "start_tls", "accept_invalid_certs": true },
+    "password_label": "Bridge 密码",
+    "help_url": "https://proton.me/support/protonmail-bridge-install",
+    "web_url": "https://mail.proton.me/",
+    "help_steps": [
+      "下载安装 Proton Mail Bridge 并用 Proton 账号登录（需要付费套餐）",
+      "在 Bridge 中选择该账号，打开「配置邮件客户端」（Configure email client）",
+      "复制 Bridge 显示的密码（不是 Proton 登录密码），端口若与默认不同请一并修改",
+      "保持 Bridge 运行，把 Bridge 密码粘贴到右侧密码框"
+    ],
+    "save_sent_copy": false,
+    "requires_bridge": true,
+    "notes": "Proton Mail 采用端到端加密，只能通过本机运行的 Proton Mail Bridge 收发（需要付费套餐）。Bridge 使用自签名证书，已自动信任 127.0.0.1 的证书。默认端口为 IMAP 1143、SMTP 1025（STARTTLS），以 Bridge 显示为准。经 Bridge 发出的邮件会由 Proton 自动保存到「已发送」。"
+  },
+  {
+    "id": "exmail",
+    "name": "腾讯企业邮",
+    "label": "腾讯企业邮",
+    "color": "#0052D9",
+    "mx_patterns": ["mxbiz1.qq.com", "mxbiz2.qq.com", "exmail.qq.com"],
+    "imap": { "host": "imap.exmail.qq.com", "port": 993, "security": "tls" },
+    "pop3": { "host": "pop.exmail.qq.com", "port": 995, "security": "tls" },
+    "smtp": { "host": "smtp.exmail.qq.com", "port": 465, "security": "tls" },
+    "password_label": "密码",
+    "help_url": "https://open.work.weixin.qq.com/help2/pc/19886",
+    "web_url": "https://exmail.qq.com/login",
+    "help_steps": [
+      "登录网页版腾讯企业邮（exmail.qq.com）",
+      "进入「设置」→「收发信设置」，开启 IMAP/SMTP 服务并保存",
+      "如果账号已开启微信安全登录：在「设置」→「邮箱绑定」中生成客户端专用密码",
+      "把邮箱密码（或客户端专用密码）粘贴到右侧密码框"
+    ],
+    "notes": "开启了安全登录（微信动态码）的账号必须使用客户端专用密码。企业微信邮箱同样使用此设置。若管理员禁用了客户端收发，请联系管理员开启。"
+  },
+  {
+    "id": "aliyun",
+    "name": "阿里邮箱（个人版）",
+    "label": "阿里邮箱",
+    "color": "#FF6A00",
+    "domains": ["aliyun.com"],
+    "imap": { "host": "imap.aliyun.com", "port": 993, "security": "tls" },
+    "pop3": { "host": "pop3.aliyun.com", "port": 995, "security": "tls" },
+    "smtp": { "host": "smtp.aliyun.com", "port": 465, "security": "tls" },
+    "password_label": "密码",
+    "web_url": "https://mail.aliyun.com/",
+    "help_steps": [
+      "登录网页版阿里邮箱（mail.aliyun.com）",
+      "进入「设置」，找到「POP3/SMTP/IMAP」并开启 IMAP/SMTP 服务",
+      "如已开启「三方客户端安全密码」，请生成并使用该密码",
+      "把密码粘贴到右侧密码框"
+    ],
+    "notes": "如果开启了「三方客户端安全密码」，客户端不能使用网页登录密码，需使用单独生成的安全密码。"
+  },
+  {
+    "id": "aliyun_qiye",
+    "name": "阿里企业邮箱",
+    "label": "阿里企业邮",
+    "color": "#E85D00",
+    "mx_patterns": ["qiye.aliyun.com", "mxhichina.com"],
+    "imap": { "host": "imap.qiye.aliyun.com", "port": 993, "security": "tls" },
+    "pop3": { "host": "pop.qiye.aliyun.com", "port": 995, "security": "tls" },
+    "smtp": { "host": "smtp.qiye.aliyun.com", "port": 465, "security": "tls" },
+    "password_label": "密码",
+    "help_url": "https://help.aliyun.com/zh/document_detail/36576.html",
+    "web_url": "https://qiye.aliyun.com/",
+    "help_steps": [
+      "登录网页版阿里企业邮箱（qiye.aliyun.com）",
+      "进入「设置」，找到「POP3/SMTP/IMAP」并开启 IMAP/SMTP 服务",
+      "如已开启「三方客户端安全密码」，请生成并使用该密码",
+      "把密码粘贴到右侧密码框"
+    ],
+    "notes": "新开通的企业邮箱默认通过「三方客户端访问策略」禁止第三方客户端登录，需要管理员把账号加入例外或关闭该策略。开启「三方客户端安全密码」后必须使用该密码登录。SMTP 不支持 587 端口。"
+  },
+  {
+    "id": "qiye163",
+    "name": "网易企业邮箱",
+    "label": "网易企业邮",
+    "color": "#2C6FE8",
+    "mx_patterns": ["qiye163mx", "qiye.163.com"],
+    "imap": { "host": "imaphz.qiye.163.com", "port": 993, "security": "tls" },
+    "pop3": { "host": "pophz.qiye.163.com", "port": 995, "security": "tls" },
+    "smtp": { "host": "smtphz.qiye.163.com", "port": 465, "security": "tls" },
+    "alt_imap": [{ "host": "imap.qiye.163.com", "port": 993, "security": "tls" }],
+    "alt_smtp": [{ "host": "smtp.qiye.163.com", "port": 465, "security": "tls" }],
+    "password_label": "密码",
+    "help_url": "https://qiye.163.com/help/client-profile.html",
+    "web_url": "https://mail.qiye.163.com/",
+    "help_steps": [
+      "登录网页版网易企业邮箱",
+      "在「设置」中找到客户端设置，开启 IMAP/SMTP 服务",
+      "如管理员要求使用客户端授权密码，请在设置中生成并复制",
+      "把密码粘贴到右侧密码框"
+    ],
+    "notes": "网易企业邮箱要求客户端发送 IMAP ID 命令。若开启了客户端授权密码，需使用授权密码而非网页登录密码；海外用户可改用 imap.qiye.163.com / smtp.qiye.163.com。"
+  },
+  {
+    "id": "ym163",
+    "name": "网易免费企业邮",
+    "label": "网易企业邮",
+    "color": "#3D8BFD",
+    "mx_patterns": ["mx.ym.163.com"],
+    "imap": { "host": "imap.ym.163.com", "port": 993, "security": "tls" },
+    "pop3": { "host": "pop.ym.163.com", "port": 995, "security": "tls" },
+    "smtp": { "host": "smtp.ym.163.com", "port": 465, "security": "tls" },
+    "alt_smtp": [{ "host": "smtp.ym.163.com", "port": 994, "security": "tls" }],
+    "password_label": "密码",
+    "help_steps": [
+      "登录网页版网易免费企业邮",
+      "在「设置」中开启 IMAP/SMTP 服务",
+      "把邮箱密码（或授权密码）粘贴到右侧密码框"
+    ],
+    "notes": "网易免费企业邮（ym.163.com）要求客户端发送 IMAP ID 命令。"
+  },
+  {
+    "id": "sina",
+    "name": "新浪邮箱",
+    "label": "新浪",
+    "color": "#E6162D",
+    "domains": ["sina.com"],
+    "imap": { "host": "imap.sina.com", "port": 993, "security": "tls" },
+    "pop3": { "host": "pop.sina.com", "port": 995, "security": "tls" },
+    "smtp": { "host": "smtp.sina.com", "port": 465, "security": "tls" },
+    "password_label": "授权码",
+    "web_url": "https://mail.sina.com.cn/",
+    "help_steps": [
+      "登录网页版新浪邮箱",
+      "进入「设置」→「更多设置」→「客户端 POP/IMAP/SMTP」",
+      "开启「授权码状态」并完成短信验证，勾选开启 IMAP/SMTP 服务",
+      "复制授权码（只显示一次），粘贴到右侧密码框"
+    ],
+    "notes": "新浪邮箱开启客户端授权码后必须使用授权码登录，不能使用网页登录密码。"
+  },
+  {
+    "id": "sina_cn",
+    "name": "新浪邮箱（sina.cn）",
+    "label": "新浪",
+    "color": "#E6162D",
+    "domains": ["sina.cn"],
+    "imap": { "host": "imap.sina.cn", "port": 993, "security": "tls" },
+    "pop3": { "host": "pop.sina.cn", "port": 995, "security": "tls" },
+    "smtp": { "host": "smtp.sina.cn", "port": 465, "security": "tls" },
+    "password_label": "授权码",
+    "web_url": "https://mail.sina.com.cn/",
+    "help_steps": [
+      "登录网页版新浪邮箱",
+      "进入「设置」→「更多设置」→「客户端 POP/IMAP/SMTP」",
+      "开启「授权码状态」并完成短信验证，勾选开启 IMAP/SMTP 服务",
+      "复制授权码（只显示一次），粘贴到右侧密码框"
+    ],
+    "notes": "新浪邮箱开启客户端授权码后必须使用授权码登录，不能使用网页登录密码。"
+  },
+  {
+    "id": "sina_vip",
+    "name": "新浪 VIP 邮箱",
+    "label": "新浪VIP",
+    "color": "#C8102E",
+    "domains": ["vip.sina.com"],
+    "imap": { "host": "imap.vip.sina.com", "port": 993, "security": "tls" },
+    "pop3": { "host": "pop.vip.sina.com", "port": 995, "security": "tls" },
+    "smtp": { "host": "smtp.vip.sina.com", "port": 465, "security": "tls" },
+    "password_label": "授权码",
+    "web_url": "https://mail.sina.com.cn/",
+    "help_steps": [
+      "登录网页版新浪 VIP 邮箱",
+      "进入「设置」→「更多设置」→「客户端 POP/IMAP/SMTP」",
+      "开启「授权码状态」并完成短信验证，勾选开启 IMAP/SMTP 服务",
+      "复制授权码（只显示一次），粘贴到右侧密码框"
+    ],
+    "notes": "新浪邮箱开启客户端授权码后必须使用授权码登录，不能使用网页登录密码。"
+  },
+  {
+    "id": "sohu",
+    "name": "搜狐邮箱",
+    "label": "搜狐",
+    "color": "#F5A300",
+    "domains": ["sohu.com"],
+    "imap": { "host": "imap.sohu.com", "port": 993, "security": "tls" },
+    "pop3": { "host": "pop3.sohu.com", "port": 995, "security": "tls" },
+    "smtp": { "host": "smtp.sohu.com", "port": 465, "security": "tls" },
+    "password_label": "独立密码",
+    "web_url": "https://mail.sohu.com/",
+    "help_steps": [
+      "登录网页版搜狐邮箱",
+      "进入「设置」→「POP3/SMTP/IMAP」",
+      "开启 POP3/SMTP/IMAP 服务，并按提示设置客户端独立密码",
+      "把独立密码粘贴到右侧密码框"
+    ],
+    "notes": "搜狐邮箱的 POP3/IMAP 服务默认关闭，客户端需使用开启服务时设置的独立密码，而不是网页登录密码。"
+  },
+  {
+    "id": "139",
+    "name": "139 邮箱（中国移动）",
+    "label": "139",
+    "color": "#0085D0",
+    "domains": ["139.com"],
+    "imap": { "host": "imap.139.com", "port": 993, "security": "tls" },
+    "pop3": { "host": "pop.139.com", "port": 995, "security": "tls" },
+    "smtp": { "host": "smtp.139.com", "port": 465, "security": "tls" },
+    "password_label": "授权码",
+    "web_url": "https://mail.10086.cn/",
+    "help_steps": [
+      "登录网页版 139 邮箱",
+      "进入「设置」，找到「POP3/SMTP/IMAP」客户端设置",
+      "开启 IMAP/SMTP 服务，按提示完成短信验证并生成授权码",
+      "把授权码粘贴到右侧密码框"
+    ],
+    "notes": "139 邮箱的客户端服务默认关闭，开启后请使用授权码登录。"
+  },
+  {
+    "id": "189",
+    "name": "189 邮箱（中国电信）",
+    "label": "189",
+    "color": "#1C6DD0",
+    "domains": ["189.cn"],
+    "imap": { "host": "imap.189.cn", "port": 993, "security": "tls" },
+    "pop3": { "host": "pop.189.cn", "port": 995, "security": "tls" },
+    "smtp": { "host": "smtp.189.cn", "port": 465, "security": "tls" },
+    "password_label": "授权码",
+    "web_url": "https://mail.189.cn/",
+    "help_steps": [
+      "登录网页版 189 邮箱",
+      "进入「设置」→「账户」，开启 POP3/IMAP/SMTP 服务",
+      "在「设置」→「安全」中生成客户端授权码（只显示一次）",
+      "把授权码粘贴到右侧密码框"
+    ],
+    "notes": "189 邮箱客户端需要使用单独生成的客户端授权码，而不是网页登录密码。"
+  },
+  {
+    "id": "zoho",
+    "name": "Zoho Mail",
+    "label": "Zoho",
+    "color": "#E42527",
+    "domains": ["zoho.com", "zohomail.com"],
+    "imap": { "host": "imap.zoho.com", "port": 993, "security": "tls" },
+    "pop3": { "host": "pop.zoho.com", "port": 995, "security": "tls" },
+    "smtp": { "host": "smtp.zoho.com", "port": 465, "security": "tls" },
+    "alt_smtp": [{ "host": "smtp.zoho.com", "port": 587, "security": "start_tls" }],
+    "password_label": "密码",
+    "help_url": "https://www.zoho.com/mail/help/imap-access.html",
+    "web_url": "https://mail.zoho.com/",
+    "help_steps": [
+      "登录网页版 Zoho Mail",
+      "进入「设置」→「邮件账户」，在 IMAP 部分勾选「IMAP 访问」",
+      "如已开启两步验证：在 accounts.zoho.com「安全」→「应用专用密码」中生成密码",
+      "把密码粘贴到右侧密码框"
+    ],
+    "notes": "需要先在 Zoho Mail 设置中启用 IMAP 访问；开启两步验证的账号必须使用应用专用密码。"
+  },
+  {
+    "id": "zoho_pro",
+    "name": "Zoho Mail（企业域名）",
+    "label": "Zoho",
+    "color": "#E42527",
+    "mx_patterns": ["zoho.com"],
+    "imap": { "host": "imappro.zoho.com", "port": 993, "security": "tls" },
+    "pop3": { "host": "poppro.zoho.com", "port": 995, "security": "tls" },
+    "smtp": { "host": "smtppro.zoho.com", "port": 465, "security": "tls" },
+    "alt_imap": [{ "host": "imap.zoho.com", "port": 993, "security": "tls" }],
+    "alt_smtp": [
+      { "host": "smtppro.zoho.com", "port": 587, "security": "start_tls" },
+      { "host": "smtp.zoho.com", "port": 465, "security": "tls" }
+    ],
+    "password_label": "密码",
+    "help_url": "https://www.zoho.com/mail/help/imap-access.html",
+    "web_url": "https://mail.zoho.com/",
+    "help_steps": [
+      "登录网页版 Zoho Mail",
+      "进入「设置」→「邮件账户」，在 IMAP 部分勾选「IMAP 访问」",
+      "如已开启两步验证：在 accounts.zoho.com「安全」→「应用专用密码」中生成密码",
+      "把密码粘贴到右侧密码框"
+    ],
+    "notes": "付费组织用户使用 imappro / smtppro 服务器，免费组织用户使用 imap.zoho.com / smtp.zoho.com。开启两步验证的账号必须使用应用专用密码。"
+  },
+  {
+    "id": "zoho_cn",
+    "name": "Zoho Mail（中国）",
+    "label": "Zoho",
+    "color": "#E42527",
+    "domains": ["zoho.com.cn", "zohomail.cn"],
+    "imap": { "host": "imap.zoho.com.cn", "port": 993, "security": "tls" },
+    "pop3": { "host": "pop.zoho.com.cn", "port": 995, "security": "tls" },
+    "smtp": { "host": "smtp.zoho.com.cn", "port": 465, "security": "tls" },
+    "password_label": "密码",
+    "help_url": "https://www.zoho.com.cn/mail/help/imap-access.html",
+    "web_url": "https://mail.zoho.com.cn/",
+    "help_steps": [
+      "登录网页版 Zoho Mail（mail.zoho.com.cn）",
+      "进入「设置」→「邮件账户」，在 IMAP 部分勾选「IMAP 访问」",
+      "如已开启两步验证，请生成应用专用密码",
+      "把密码粘贴到右侧密码框"
+    ],
+    "notes": "需要先在 Zoho Mail 设置中启用 IMAP 访问；开启两步验证的账号必须使用应用专用密码。"
+  },
+  {
+    "id": "fastmail",
+    "name": "Fastmail",
+    "label": "Fastmail",
+    "color": "#0A64BC",
+    "domains": [
+      "fastmail.com", "fastmail.fm", "fastmail.cn", "fastmail.net", "fastmail.org", "fastmail.us",
+      "fastmail.co.uk", "fastmail.uk"
+    ],
+    "mx_patterns": ["messagingengine.com"],
+    "imap": { "host": "imap.fastmail.com", "port": 993, "security": "tls" },
+    "pop3": { "host": "pop.fastmail.com", "port": 995, "security": "tls" },
+    "smtp": { "host": "smtp.fastmail.com", "port": 465, "security": "tls" },
+    "alt_smtp": [{ "host": "smtp.fastmail.com", "port": 587, "security": "start_tls" }],
+    "password_label": "应用专用密码",
+    "help_url": "https://www.fastmail.help/hc/en-us/articles/360058752854-App-passwords",
+    "web_url": "https://app.fastmail.com/",
+    "help_steps": [
+      "登录网页版 Fastmail",
+      "进入「Settings」→「Privacy & Security」，找到 App passwords",
+      "新建应用密码，访问权限选择「IMAP, POP, SMTP」",
+      "复制生成的密码，粘贴到右侧密码框"
+    ],
+    "notes": "Fastmail 要求第三方客户端使用应用专用密码。"
+  },
+  {
+    "id": "gmx",
+    "name": "GMX Mail",
+    "label": "GMX",
+    "color": "#1C449B",
+    "domains": [
+      "gmx.com", "gmx.us", "gmx.co.uk", "gmx.es", "gmx.fr", "gmx.ca", "gmx.it", "gmx.ie", "gmx.pt", "gmx.se",
+      "gmx.sg", "gmx.hk", "gmx.tw", "gmx.cn", "gmx.ph", "gmx.ru", "gmx.co.in", "gmx.com.br", "gmx.com.my",
+      "gmx.com.tr", "gmx.li", "gmx.tm"
+    ],
+    "imap": { "host": "imap.gmx.com", "port": 993, "security": "tls" },
+    "pop3": { "host": "pop.gmx.com", "port": 995, "security": "tls" },
+    "smtp": { "host": "mail.gmx.com", "port": 587, "security": "start_tls" },
+    "alt_smtp": [{ "host": "mail.gmx.com", "port": 465, "security": "tls" }],
+    "password_label": "密码",
+    "help_url": "https://support.gmx.com/pop-imap/toggle.html",
+    "web_url": "https://www.gmx.com/",
+    "help_steps": [
+      "登录网页版 GMX",
+      "进入「Settings」→「POP3 & IMAP」",
+      "勾选「Enable POP3 and IMAP access」并保存",
+      "把 GMX 密码（开启两步验证时使用应用专用密码）粘贴到右侧"
+    ],
+    "notes": "GMX 的 POP3/IMAP 访问默认关闭，需要先在网页版设置中开启。"
+  },
+  {
+    "id": "gmx_de",
+    "name": "GMX（德国）",
+    "label": "GMX",
+    "color": "#1C449B",
+    "domains": ["gmx.net", "gmx.de", "gmx.at", "gmx.ch", "gmx.eu", "gmx.biz", "gmx.org", "gmx.info"],
+    "imap": { "host": "imap.gmx.net", "port": 993, "security": "tls" },
+    "pop3": { "host": "pop.gmx.net", "port": 995, "security": "tls" },
+    "smtp": { "host": "mail.gmx.net", "port": 587, "security": "start_tls" },
+    "alt_smtp": [{ "host": "mail.gmx.net", "port": 465, "security": "tls" }],
+    "password_label": "密码",
+    "help_url": "https://hilfe.gmx.net/pop-imap/einschalten.html",
+    "web_url": "https://www.gmx.net/",
+    "help_steps": [
+      "登录网页版 GMX",
+      "进入「Einstellungen」→「POP3 & IMAP」",
+      "勾选「POP3 und IMAP Zugriff erlauben」并保存",
+      "把 GMX 密码（开启两步验证时使用应用专用密码）粘贴到右侧"
+    ],
+    "notes": "GMX 的 POP3/IMAP 访问默认关闭，需要先在网页版设置中开启。"
+  },
+  {
+    "id": "yandex",
+    "name": "Yandex Mail",
+    "label": "Yandex",
+    "color": "#FC3F1D",
+    "domains": ["yandex.com", "yandex.ru", "yandex.by", "yandex.kz", "yandex.ua", "ya.ru", "narod.ru"],
+    "mx_patterns": ["mx.yandex.net", "mx.yandex.ru"],
+    "imap": { "host": "imap.yandex.com", "port": 993, "security": "tls" },
+    "pop3": { "host": "pop.yandex.com", "port": 995, "security": "tls" },
+    "smtp": { "host": "smtp.yandex.com", "port": 465, "security": "tls" },
+    "alt_smtp": [{ "host": "smtp.yandex.com", "port": 587, "security": "start_tls" }],
+    "password_label": "应用专用密码",
+    "help_url": "https://yandex.com/support/yandex-360/customers/mail/en/mail-clients/others",
+    "web_url": "https://mail.yandex.com/",
+    "help_steps": [
+      "登录 Yandex Mail，进入「设置」→「Email clients」",
+      "勾选「From the imap.yandex.com server via IMAP」和「App passwords and OAuth tokens」并保存",
+      "在 id.yandex.com「Security」→「App passwords」中创建邮件用的应用密码",
+      "把应用密码粘贴到右侧密码框"
+    ],
+    "notes": "Yandex 要求第三方客户端使用应用密码，并需要先在设置中允许 IMAP 访问。"
+  },
+  {
+    "id": "mailru",
+    "name": "Mail.ru",
+    "label": "Mail.ru",
+    "color": "#005FF9",
+    "domains": ["mail.ru", "inbox.ru", "list.ru", "bk.ru", "internet.ru"],
+    "mx_patterns": ["emx.mail.ru"],
+    "imap": { "host": "imap.mail.ru", "port": 993, "security": "tls" },
+    "pop3": { "host": "pop.mail.ru", "port": 995, "security": "tls" },
+    "smtp": { "host": "smtp.mail.ru", "port": 465, "security": "tls" },
+    "alt_smtp": [{ "host": "smtp.mail.ru", "port": 587, "security": "start_tls" }],
+    "password_label": "应用专用密码",
+    "help_url": "https://help.mail.ru/mail/login/mailer/",
+    "web_url": "https://e.mail.ru/",
+    "help_steps": [
+      "登录 Mail.ru，进入「Настройки」→「Безопасность」",
+      "打开「Пароли для внешних приложений」，创建一个新密码",
+      "访问权限选择完整访问（IMAP、POP3、SMTP）",
+      "把生成的密码粘贴到右侧密码框"
+    ],
+    "notes": "Mail.ru 要求第三方客户端使用「外部应用密码」，不能使用账户登录密码。"
+  }
+]
