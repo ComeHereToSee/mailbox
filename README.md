@@ -8,9 +8,9 @@
 
 ![主界面](docs/screenshots/main.png)
 
-| 写信 | 设置 | 添加账户 |
-|---|---|---|
-| ![写信](docs/screenshots/compose.png) | ![设置](docs/screenshots/settings.png) | ![添加账户](docs/screenshots/add-account.png) |
+| 写信（自动加密） | 设置 | 加密密钥 | 添加账户 |
+|---|---|---|---|
+| ![写信](docs/screenshots/compose.png) | ![设置](docs/screenshots/settings.png) | ![加密](docs/screenshots/crypto.png) | ![添加账户](docs/screenshots/add-account.png) |
 
 <sub>截图由 CI 在 macOS 15 上用演示数据（`--demo`）自动拍摄。</sub>
 
