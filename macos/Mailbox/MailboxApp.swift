@@ -47,8 +47,15 @@ final class WindowRouter {
     /// macOS 14+ ignores a programmatic `showSettingsWindow:`; the SwiftUI action is the supported way.
     func showSettings() {
         NSApp.activate(ignoringOtherApps: true)
-        openSettings?()
+        if let open = openSettings {
+            open()
+        } else {
+            pendingSettings = true
+        }
     }
+
+    /// Set when a URL asked for Settings before the main window captured the action.
+    var pendingSettings = false
 
     func showMain() {
         openWindow?(id: "main")

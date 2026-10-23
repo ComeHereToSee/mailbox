@@ -33,6 +33,10 @@ struct MainView: View {
         .onAppear {
             WindowRouter.shared.openWindow = openWindow
             WindowRouter.shared.openSettings = openSettings
+            if WindowRouter.shared.pendingSettings {
+                WindowRouter.shared.pendingSettings = false
+                openSettings()
+            }
         }
         .onContinueUserActivity(CSSearchableItemActionType) { activity in
             if let id = SpotlightIndexer.messageId(from: activity) {
