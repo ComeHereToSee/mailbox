@@ -173,6 +173,11 @@ pub(super) async fn refresh_folders(e: &Engine, acc: &Account, c: &mut ImapConn)
     Ok(())
 }
 
+/// Gmail labels without system ones (`\\Inbox`, `\\Important` ...), decoded from modified UTF-7.
+fn user_labels(labels: &[String]) -> Vec<String> {
+    labels.iter().filter(|l| !l.starts_with('\\')).map(|l| crate::imap::utf7::decode(l)).collect()
+}
+
 fn imap_date(ts: i64) -> String {
     chrono::DateTime::from_timestamp(ts, 0).unwrap_or_default().format("%d-%b-%Y").to_string()
 }
@@ -198,7 +203,7 @@ pub(super) fn to_new_message(e: &Engine, acc: &Account, folder: &Folder, fm: &Fe
         date: h.date.or(fm.internal_date).unwrap_or_else(now),
         size: fm.size as i64,
         flags: fm.flags.clone(),
-        labels: fm.labels.iter().filter(|l| !l.starts_with("\\\\")).cloned().collect(),
+        labels: user_labels(&fm.labels),
         has_attachments: h.multipart_mixed,
         snippet: String::new(),
         category,
@@ -290,7 +295,7 @@ async fn sync_folder(e: &Engine, acc: &Account, c: &mut ImapConn, f: &Folder) ->
             for fm in changed {
                 if let Some((id, old)) = by_uid.get(&fm.uid) {
                     if *old != fm.flags || !fm.labels.is_empty() {
-                        e.db.update_flags(*id, &fm.flags, &fm.labels, fm.modseq)?;
+                        e.db.update_flags(*id, &fm.flags, &user_labels(&fm.labels), fm.modseq)?;
                         any = true;
                     }
                 }
