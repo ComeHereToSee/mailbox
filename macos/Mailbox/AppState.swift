@@ -111,6 +111,11 @@ final class AppState: ObservableObject {
             return
         }
         connection = .ready
+        if !UserDefaults.standard.bool(forKey: "configuredLoginItem") {
+            // Keep receiving mail after a restart by default; can be turned off in Settings → General.
+            try? LoginItem.setEnabled(true)
+            UserDefaults.standard.set(true, forKey: "configuredLoginItem")
+        }
         await RemoteBlocker.shared.prepare()
         let stream = EventStream(handler: { event in
             Task { @MainActor in AppState.shared.handle(event) }
