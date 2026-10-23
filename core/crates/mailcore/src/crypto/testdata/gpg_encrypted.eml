@@ -1,0 +1,36 @@
+From: Dave <dave@example.net>
+To: carol@example.net
+Subject: gpg encrypted
+MIME-Version: 1.0
+Content-Type: multipart/encrypted; protocol="application/pgp-encrypted"; boundary="pgp-b"
+
+--pgp-b
+Content-Type: application/pgp-encrypted
+
+Version: 1
+
+--pgp-b
+Content-Type: application/octet-stream; name="encrypted.asc"
+
+-----BEGIN PGP MESSAGE-----
+
+hQEMA8UxT4z0fsw5AQf/bjvIxhMeNTxWhpjeoaa2jhtU9hk2+XY1UEvVq9KwprCm
+rz5H4e5F9t08Swr4gfCM9iwywRixyiQrJGoDOQ++DdrlPVoSed0I2CBVbWI5RjEd
+H5aSRVuvSI/QETgROI+cZHaf9lisMPJY+ApNTxB5gc7SkjicpDv6k/BpwMDQjDcb
++yqc6aavkCJLwsmBJRogOtIWQVdzgZg1jnGUqAqhdQVe2wYKKToz9u5ORT73uVUD
+9maGzQFEyoR8lRSJiJfHG7M8vwgYBfHqohXY9JSLZ5t6xjolDQLEz1XJTeiYOQQ8
+tcAtrl+Rt5cK6/rwbHvLixvg6T5BppQPgh4w/PxOf9TBHwEJAhAlKLYHq79DMqwe
+fGNdwSRdQc5RJNIAXU5LJKRFck0DBNVqqLhboUV7J0kiEi/Ii9RI/kk+MdWhDQR6
+7yKO4nAAzs2pCjbfvhvDIkE3HhFS5brSQOBJUSUTG8y9WuZk3vn7L69jhgTrPejn
+SPMOMINbSuLZqnKz4aKFSeqgzf/f1oT+HPlrB8pSWW/3kg/7D9xslo5E3rlNH7EH
+OsU1cONZcrjybSjpwoNy9jbOOHQm8Y2V8BfIQXFegaXriv7WjiYGmdEEmL6VmGyL
+DMLEeJJPsUGIfRk1Q1+SjZW+6xlqpccYdfFFVpWFAE+YX/fGJvXrHfye5x+fxfKw
+vRVBYHyaeouqGI/2FN1lSyNSWONyfMUuzQmj1mOVprkY7bmu5fczoGqpZFOLeCk4
+w2+wmipeTuVB8gHmG4xpxW9VSV/tR/t0lVHV+/dNoz+l74YbD7dYzz4Wxigyjdts
+k08DJub/TZTUJC0iQoWZIAmwBGI3z7QtjYI5yeR3rgb83EPsOrMb1+9LGWKfYMNI
+e4ou6g8EA4RdO2Oz/mGetiHVg4nXPm9v14azXZokQIVvXaebotYQ6kqAFHtssi1D
+1oZCMjqlt1aZPg3CKmptHuxWx3LPrwl8Hd3w1oAwy52v
+=HeLT
+-----END PGP MESSAGE-----
+
+--pgp-b--

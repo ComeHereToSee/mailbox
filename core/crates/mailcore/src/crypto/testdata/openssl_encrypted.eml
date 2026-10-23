@@ -1,0 +1,29 @@
+From: Bob Wang <bob@example.org>
+To: alice@example.com
+Subject: openssl encrypted
+Date: Thu, 22 Oct 2026 10:00:00 +0800
+Message-ID: <s3@example.org>
+MIME-Version: 1.0
+Content-Disposition: attachment; filename="smime.p7m"
+Content-Type: application/x-pkcs7-mime; smime-type=enveloped-data; name="smime.p7m"
+Content-Transfer-Encoding: base64
+
+MIIDPAYJKoZIhvcNAQcDoIIDLTCCAykCAQAxggFwMIIBbAIBADBUMDwxGDAWBgNV
+BAMMD+eIseS4veS4nSBBbGljZTEgMB4GCSqGSIb3DQEJARYRYWxpY2VAZXhhbXBs
+ZS5jb20CFDUwx9SpgjWESdV3sG/EQu3esBmaMA0GCSqGSIb3DQEBAQUABIIBAFsX
+O2Qeo+gcWh+rqfXbrX2iluIyeb534oygeYPgn1+LocWNmiVzCy4vasa5S+V8QtyE
+Yvsakeq6eGmiyZLox4Kt1qxpy6xtWCS6yZrnEDTK5f6NpiK9jR4bkotkSUHgf4Aw
+n4Izyqw32wYxl5qjcOVUYDfytuifyxi1sH6Lk01iiiWsMQ7uJIPKwuarqYmpZez/
+p6JMcNs0vxYj2hLIUKzOLFwvpk+SI6VE20vaPr5UAFYJddHQF9MFNDqYvCeq5GGd
+cvd791XfHI72vCQj3OEGIkaI/C3w7qA2r/1sDTcQvepdNkmJN7nBioBM521FmZij
+HEz8TauDhdXj3hWC3WEwggGuBgkqhkiG9w0BBwEwHQYJYIZIAWUDBAEqBBAZrDZM
+OJH5PuRuaqQlyAqegIIBgOD2/RK1iR2gIgRF07CQ7yCoScZNAtrZRshx8HxrpLJZ
+UkafA4W5dBnERd3OOZ/HLZZnN3vebp4vcqzMXe+QXwEjvFEFuIAiuZQypzzKN7S9
+8N9+HanmdAqSzNTT/LrOffUfgRvorJhvPM6ISJnsmRY2Jgi0d/+VcPPRZ5YsZ9Mb
+iFOuyS4W5NOVANUc2WGGGXwqYHnqcdyqeuzYrDL3cgWoVMBVizwr+sQ+VvJvGotn
+kfn69+M631j7wERYtD5dyYq+IdI9UzdFJYYHcxfSXR5oilDW0HBX5NFKw7u9Av6+
+MuCMaq1JyT/nQmKm6VTQ95gDHIWfuAMPemwmQ1DftV3/robNffWY8OvJGm/eSdL/
+ATso85P3TUvf9i6QZLG2DCjtZEuhnu25PjDwb1YFR+3HHUSUdKJyLBj7sFwBztJG
+v6/4iJ6L8CLPke0SG9ifysKjVWJ1r834w5stHqLFkvzXHcUGPlVnB/mbqpAWhCKN
+Gqs/zIXMZMbIsg4Lsz19Wg==
+

@@ -1,0 +1,67 @@
+From: Bob Wang <bob@example.org>
+To: alice@example.com
+Subject: openssl signed
+Date: Thu, 22 Oct 2026 10:00:00 +0800
+Message-ID: <s1@example.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; protocol="application/x-pkcs7-signature"; micalg="sha-256"; boundary="----DA5A6C9C7E47B085008FBD59254B5F9C"
+
+This is an S/MIME signed message
+
+------DA5A6C9C7E47B085008FBD59254B5F9C
+Content-Type: multipart/mixed; boundary="inner-b"
+
+--inner-b
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+
+你好，这是来自 OpenSSL 的测试邮件。
+--inner-b
+Content-Type: application/pdf; name="报告.pdf"
+Content-Disposition: attachment; filename="report.pdf"
+Content-Transfer-Encoding: base64
+
+JVBERi0xLjQgdGVzdA==
+--inner-b--
+
+------DA5A6C9C7E47B085008FBD59254B5F9C
+Content-Type: application/x-pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+
+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
+
+------DA5A6C9C7E47B085008FBD59254B5F9C--
+

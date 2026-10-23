@@ -1,0 +1,20 @@
+From: Dave <dave@example.net>
+To: carol@example.net
+Subject: gpg clearsigned
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA512
+
+你好 Carol，
+这是一封明文签名的邮件。
+- - 以短横线开头的行
+-----BEGIN PGP SIGNATURE-----
+
+iHUEARYKAB0WIQRP+JJO5IhELcUJsfiMZOt5FDWyGgUCattboQAKCRCMZOt5FDWy
+Gpb3AQCb9PhETBabfAKL2UjEDDdlRQsIOS1fQypD4bJhAOSO9QEAqxl7DnamSdGG
+04OSXvR7FvTk8m91TwfkUJzs6/DY9ww=
+=dyLY
+-----END PGP SIGNATURE-----

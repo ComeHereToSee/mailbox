@@ -1,0 +1,33 @@
+From: Dave <dave@example.net>
+To: carol@example.net
+Subject: gpg signed
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512; protocol="application/pgp-signature"; boundary="sig-b"
+
+--sig-b
+Content-Type: multipart/mixed; boundary="inner-b"
+
+--inner-b
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+
+你好，这是来自 OpenSSL 的测试邮件。
+--inner-b
+Content-Type: application/pdf; name="报告.pdf"
+Content-Disposition: attachment; filename="report.pdf"
+Content-Transfer-Encoding: base64
+
+JVBERi0xLjQgdGVzdA==
+--inner-b--
+--sig-b
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRP+JJO5IhELcUJsfiMZOt5FDWyGgUCattboQAKCRCMZOt5FDWy
+GkISAP9q2vEPcu57MV/IvjsG+jVU1hOdYurYMDL145Y40cvLrwD+OvDHIDGrAjLR
+wLj+iY6I+w+ZHCwxkW0ALfpkc1XU/Qk=
+=TCHe
+-----END PGP SIGNATURE-----
+
+--sig-b--

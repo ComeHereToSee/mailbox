@@ -1,0 +1,52 @@
+From: Eve <eve@example.net>
+To: alice@example.com
+Subject: ecdsa
+MIME-Version: 1.0
+Content-Type: multipart/signed; protocol="application/x-pkcs7-signature"; micalg="sha-256"; boundary="----87514C6555A6DFB30049638817C3232B"
+
+This is an S/MIME signed message
+
+------87514C6555A6DFB30049638817C3232B
+Content-Type: multipart/mixed; boundary="inner-b"
+
+--inner-b
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+
+你好，这是来自 OpenSSL 的测试邮件。
+--inner-b
+Content-Type: application/pdf; name="报告.pdf"
+Content-Disposition: attachment; filename="report.pdf"
+Content-Transfer-Encoding: base64
+
+JVBERi0xLjQgdGVzdA==
+--inner-b--
+
+------87514C6555A6DFB30049638817C3232B
+Content-Type: application/x-pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+
+MIIDqAYJKoZIhvcNAQcCoIIDmTCCA5UCAQExDzANBglghkgBZQMEAgEFADALBgkq
+hkiG9w0BBwGgggHTMIIBzzCCAXWgAwIBAgIULPFJSw551ZnkWENqET0sFCl9mHMw
+CgYIKoZIzj0EAwIwLjEMMAoGA1UEAwwDRXZlMR4wHAYJKoZIhvcNAQkBFg9ldmVA
+ZXhhbXBsZS5uZXQwIBcNMjYxMDIzMTMwNTMzWhgPMjEyNjA5MjkxMzA1MzNaMC4x
+DDAKBgNVBAMMA0V2ZTEeMBwGCSqGSIb3DQEJARYPZXZlQGV4YW1wbGUubmV0MFkw
+EwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEhvNI6aNYSqdWU7GOelhdlCy2hcNHnFWO
+H6IsIhknW9Qx+hzeZjisYAipyIybXVJZZVcjCVs3nj8q0TSn1ke4/qNvMG0wHQYD
+VR0OBBYEFMJn+539DVCVvhCHvFe30lk7SlvQMB8GA1UdIwQYMBaAFMJn+539DVCV
+vhCHvFe30lk7SlvQMA8GA1UdEwEB/wQFMAMBAf8wGgYDVR0RBBMwEYEPZXZlQGV4
+YW1wbGUubmV0MAoGCCqGSM49BAMCA0gAMEUCIQDV+bABAi1YaaOibhVMYcV/6OB7
+T+L/Z+wEq/5d5AlawQIgMpDz4w2pAJuAJkSXBIkiPLUo2e6UKDleZIbdty7zYK8x
+ggGZMIIBlQIBATBGMC4xDDAKBgNVBAMMA0V2ZTEeMBwGCSqGSIb3DQEJARYPZXZl
+QGV4YW1wbGUubmV0AhQs8UlLDnnVmeRYQ2oRPSwUKX2YczANBglghkgBZQMEAgEF
+AKCB5DAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0y
+NjEwMjMxMzA1MzNaMC8GCSqGSIb3DQEJBDEiBCDxdVCTw6vqcJYg8OWbLmIItpon
+xfVAQ3k0c46mVLZirjB5BgkqhkiG9w0BCQ8xbDBqMAsGCWCGSAFlAwQBKjALBglg
+hkgBZQMEARYwCwYJYIZIAWUDBAECMAoGCCqGSIb3DQMHMA4GCCqGSIb3DQMCAgIA
+gDANBggqhkiG9w0DAgIBQDAHBgUrDgMCBzANBggqhkiG9w0DAgIBKDAKBggqhkjO
+PQQDAgRGMEQCIFNmwYl74xnZHmtc3mfvTrpXVga5s5gb9HPVIE040y2EAiBr+Y9X
+ffMtykvwTf4eSPfI8cXQ0byBHUBtC/v1T5qZ1w==
+
+------87514C6555A6DFB30049638817C3232B--
+

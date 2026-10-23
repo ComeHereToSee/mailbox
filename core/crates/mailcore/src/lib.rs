@@ -4,6 +4,7 @@
 pub mod api;
 pub mod autoconfig;
 pub mod categorize;
+pub mod crypto;
 pub mod engine;
 pub mod error;
 pub mod html;
