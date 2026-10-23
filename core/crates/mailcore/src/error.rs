@@ -36,7 +36,14 @@ impl From<serde_json::Error> for Error {
 
 impl From<async_imap::error::Error> for Error {
     fn from(e: async_imap::error::Error) -> Self {
-        Error::Imap(e.to_string())
+        use async_imap::error::Error as E;
+        match e {
+            E::No(m) => Error::Imap(format!("服务器拒绝: {m}")),
+            E::Bad(m) => Error::Imap(format!("服务器无法处理命令: {m}")),
+            E::Io(io) => Error::Net(io.to_string()),
+            E::ConnectionLost => Error::Net("连接已断开".into()),
+            other => Error::Net(other.to_string()),
+        }
     }
 }
 
@@ -53,6 +60,11 @@ impl From<lettre::transport::smtp::Error> for Error {
 }
 
 impl Error {
+    /// The connection is unusable (as opposed to the server refusing one command).
+    pub fn is_connection(&self) -> bool {
+        matches!(self, Error::Net(_) | Error::Io(_))
+    }
+
     /// Authentication problems are not retried automatically.
     pub fn is_auth(&self) -> bool {
         matches!(self, Error::Auth(_) | Error::OAuth(_))

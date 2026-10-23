@@ -23,6 +23,10 @@ pub enum OpKind {
     DeleteFolder { path: String },
     /// POP3: delete these UIDLs from the server.
     PopDelete { uidls: Vec<String> },
+    /// Upload a draft to the Drafts folder, replacing older copies tagged with the same draft id.
+    ReplaceDraft { draft_id: String, blob: String },
+    /// Remove the server copies of a draft (after sending or discarding).
+    DeleteDraft { draft_id: String },
 }
 
 impl OpKind {
@@ -37,6 +41,8 @@ impl OpKind {
             OpKind::RenameFolder { .. } => "rename_folder",
             OpKind::DeleteFolder { .. } => "delete_folder",
             OpKind::PopDelete { .. } => "pop_delete",
+            OpKind::ReplaceDraft { .. } => "replace_draft",
+            OpKind::DeleteDraft { .. } => "delete_draft",
         }
     }
 }
@@ -51,14 +57,35 @@ pub struct Op {
 
 impl Db {
     pub fn enqueue_op(&self, account_id: &str, kind: &OpKind) -> Result<i64> {
+        self.enqueue_op_at(account_id, kind, 0)
+    }
+
+    /// Enqueues an op that only becomes due at `not_before` (used to keep a short undo window).
+    pub fn enqueue_op_at(&self, account_id: &str, kind: &OpKind, not_before: i64) -> Result<i64> {
         let payload = serde_json::to_string(kind)?;
         self.write(|c| {
             c.execute(
-                "INSERT INTO ops (account_id, kind, payload, created_at) VALUES (?, ?, ?, ?)",
-                params![account_id, kind.name(), payload, now()],
+                "INSERT INTO ops (account_id, kind, payload, next_try, created_at) VALUES (?, ?, ?, ?, ?)",
+                params![account_id, kind.name(), payload, not_before, now()],
             )?;
             Ok(c.last_insert_rowid())
         })
+    }
+
+    /// Cancels ops that have not run yet (undo). Returns how many were removed.
+    pub fn cancel_ops(&self, ids: &[i64]) -> Result<usize> {
+        self.tx(|tx| {
+            let mut n = 0;
+            for id in ids {
+                n += tx.execute("DELETE FROM ops WHERE id = ? AND attempts = 0", [id])?;
+            }
+            Ok(n)
+        })
+    }
+
+    /// Earliest time an op of this account becomes due.
+    pub fn next_op_time(&self, account_id: &str) -> Result<Option<i64>> {
+        self.read(|c| Ok(c.query_row("SELECT MIN(next_try) FROM ops WHERE account_id = ?", [account_id], |r| r.get(0))?))
     }
 
     /// Ops ready to run for an account, oldest first.

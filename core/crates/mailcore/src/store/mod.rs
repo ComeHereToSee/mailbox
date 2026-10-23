@@ -9,7 +9,7 @@ mod ops;
 mod outbox;
 
 pub use folders::FolderSpec;
-pub use messages::{ListQuery, NewMessage, StoredMessage};
+pub use messages::{ListQuery, NewMessage, Snapshot, StoredMessage};
 pub use ops::{Op, OpKind};
 
 use crate::error::Result;

@@ -399,6 +399,8 @@ pub struct MessageDetail {
     pub text: Option<String>,
     pub attachments: Vec<Attachment>,
     pub has_remote_content: bool,
+    /// Remote images may be loaded right away (settings / trusted sender).
+    pub allow_remote: bool,
     pub trackers: i64,
     pub unsubscribe: Option<Unsubscribe>,
     pub invite: Option<CalendarInvite>,
@@ -467,9 +469,14 @@ pub struct Draft {
     pub plain_text_only: bool,
     pub attachments: Vec<DraftAttachment>,
     pub mode: ComposeMode,
+    /// The message being replied to / forwarded.
     pub source_message_id: Option<MessageId>,
+    /// When editing a draft that exists on the server (Drafts folder), that message.
+    pub draft_message_id: Option<MessageId>,
     pub request_read_receipt: bool,
     pub priority_high: bool,
+    /// iMIP calendar part (method, ics) for invitation replies.
+    pub calendar: Option<(String, String)>,
     pub updated_at: i64,
 }
 

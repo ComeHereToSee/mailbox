@@ -3,6 +3,7 @@
 
 pub mod autoconfig;
 pub mod categorize;
+pub mod engine;
 pub mod error;
 pub mod html;
 pub mod imap;
@@ -21,4 +22,5 @@ pub mod secrets;
 pub mod smtp;
 pub mod store;
 
+pub use engine::Engine;
 pub use error::{Error, Result};

@@ -319,7 +319,64 @@ pub(crate) fn mailbox_filter(db: &Db, mailbox: &Mailbox) -> Result<search::Filte
     Ok(f)
 }
 
+/// State of a message before a user action, used to undo it.
+#[derive(Debug, Clone)]
+pub struct Snapshot {
+    pub id: MessageId,
+    pub folder_id: FolderId,
+    pub uid: Option<u32>,
+    pub seen: bool,
+    pub flagged: bool,
+    pub snoozed_until: Option<i64>,
+    pub pinned: bool,
+    pub hidden: bool,
+    pub labels: String,
+}
+
 impl Db {
+    pub fn snapshot(&self, ids: &[MessageId]) -> Result<Vec<Snapshot>> {
+        self.read(|c| {
+            let mut st = c.prepare(
+                "SELECT id, folder_id, uid, seen, flagged, snoozed_until, pinned, hidden, labels FROM messages WHERE id = ?",
+            )?;
+            let mut out = Vec::new();
+            for id in ids {
+                if let Some(s) = st
+                    .query_row([id], |r| {
+                        Ok(Snapshot {
+                            id: r.get(0)?,
+                            folder_id: r.get(1)?,
+                            uid: r.get(2)?,
+                            seen: r.get(3)?,
+                            flagged: r.get(4)?,
+                            snoozed_until: r.get(5)?,
+                            pinned: r.get(6)?,
+                            hidden: r.get(7)?,
+                            labels: r.get(8)?,
+                        })
+                    })
+                    .optional()?
+                {
+                    out.push(s);
+                }
+            }
+            Ok(out)
+        })
+    }
+
+    pub fn restore(&self, snaps: &[Snapshot]) -> Result<()> {
+        self.tx(|tx| {
+            for s in snaps {
+                tx.execute(
+                    "UPDATE messages SET folder_id = ?, uid = ?, seen = ?, flagged = ?, snoozed_until = ?, pinned = ?, hidden = ?, labels = ?
+                     WHERE id = ?",
+                    params![s.folder_id, s.uid, s.seen, s.flagged, s.snoozed_until, s.pinned, s.hidden, s.labels, s.id],
+                )?;
+            }
+            Ok(())
+        })
+    }
+
     /// Inserts a message or refreshes an existing copy. Returns `(id, inserted)`.
     pub fn insert_message(&self, m: &NewMessage) -> Result<(MessageId, bool)> {
         self.tx(|tx| {
@@ -526,6 +583,17 @@ impl Db {
             let rows = st
                 .query_map([folder_id], |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?)))?
                 .collect::<rusqlite::Result<Vec<_>>>()?;
+            Ok(rows)
+        })
+    }
+
+    /// UIDL → (message id, first seen) for every POP3 message of an account.
+    pub fn account_remote_ids(&self, account_id: &str) -> Result<std::collections::HashMap<String, (MessageId, i64)>> {
+        self.read(|c| {
+            let mut st = c.prepare("SELECT remote_id, id, created_at FROM messages WHERE account_id = ? AND remote_id IS NOT NULL")?;
+            let rows = st
+                .query_map([account_id], |r| Ok((r.get::<_, String>(0)?, (r.get(1)?, r.get(2)?))))?
+                .collect::<rusqlite::Result<std::collections::HashMap<_, _>>>()?;
             Ok(rows)
         })
     }
