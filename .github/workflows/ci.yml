@@ -61,12 +61,6 @@ jobs:
           "$APP/Contents/MacOS/Mailbox" --demo > /tmp/app.log 2>&1 &
           sleep 30
           screencapture -x /tmp/shot.png || true
-          if [ -f /tmp/shot.png ]; then
-            sips -Z 1500 -s format jpeg -s formatOptions 55 /tmp/shot.png --out /tmp/shot.jpg >/dev/null
-            echo "SCREENSHOT_BEGIN"
-            base64 -i /tmp/shot.jpg | fold -w 2000
-            echo "SCREENSHOT_END"
-          fi
           tail -30 /tmp/app.log || true
           tail -30 "$HOME/Library/Application Support/Mailbox/logs/mailcore.log" || true
       - name: Upload screenshot
