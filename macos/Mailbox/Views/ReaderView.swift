@@ -251,9 +251,10 @@ struct MessageCard: View {
             Avatar(address: detail.summary.from, size: 38)
             VStack(alignment: .leading, spacing: 2) {
                 HStack(spacing: 6) {
-                    Text(detail.summary.from.display).fontWeight(.semibold)
+                    Text(detail.summary.from.display).fontWeight(.semibold).lineLimit(1).layoutPriority(1)
                     if detail.summary.isVip { Image(systemName: "crown.fill").foregroundStyle(.orange).font(.caption) }
                     Text(detail.summary.from.email).foregroundStyle(.secondary).font(.caption)
+                        .lineLimit(1).truncationMode(.middle)
                         .textSelection(.enabled)
                 }
                 if expanded {
@@ -266,6 +267,7 @@ struct MessageCard: View {
             Spacer()
             VStack(alignment: .trailing, spacing: 4) {
                 Text(Fmt.full(detail.summary.date)).font(.caption).foregroundStyle(.secondary)
+                    .lineLimit(1).fixedSize()
                 HStack(spacing: 6) {
                     if detail.encrypted { Image(systemName: "lock.fill").help("加密邮件") }
                     if detail.signed { Image(systemName: "checkmark.seal").help("已签名") }

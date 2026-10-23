@@ -33,6 +33,7 @@ struct MailboxApp: App {
 final class WindowRouter {
     static let shared = WindowRouter()
     var openWindow: OpenWindowAction?
+    var openSettings: OpenSettingsAction?
 
     func compose(_ request: ComposeRequest) {
         if let open = openWindow {
@@ -41,6 +42,12 @@ final class WindowRouter {
             AppState.shared.pendingCompose = request
         }
         NSApp.activate(ignoringOtherApps: true)
+    }
+
+    /// macOS 14+ ignores a programmatic `showSettingsWindow:`; the SwiftUI action is the supported way.
+    func showSettings() {
+        NSApp.activate(ignoringOtherApps: true)
+        openSettings?()
     }
 
     func showMain() {

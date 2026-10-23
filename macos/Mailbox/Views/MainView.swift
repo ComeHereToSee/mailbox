@@ -4,6 +4,7 @@ import SwiftUI
 struct MainView: View {
     @EnvironmentObject private var state: AppState
     @Environment(\.openWindow) private var openWindow
+    @Environment(\.openSettings) private var openSettings
     @State private var columns = NavigationSplitViewVisibility.all
 
     var body: some View {
@@ -29,7 +30,10 @@ struct MainView: View {
         }
         .overlay(alignment: .bottom) { ToastView().padding(.bottom, 16) }
         .overlay { if state.locked { LockView() } }
-        .onAppear { WindowRouter.shared.openWindow = openWindow }
+        .onAppear {
+            WindowRouter.shared.openWindow = openWindow
+            WindowRouter.shared.openSettings = openSettings
+        }
         .onContinueUserActivity(CSSearchableItemActionType) { activity in
             if let id = SpotlightIndexer.messageId(from: activity) {
                 Task { await state.open(messageId: id) }

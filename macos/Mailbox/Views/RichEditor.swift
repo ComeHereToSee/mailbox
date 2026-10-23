@@ -158,6 +158,7 @@ struct RichEditor: NSViewRepresentable {
 struct FormatBar: View {
     let editor: RichEditorController
     @State private var textColor = Color.primary
+    @State private var showColors = false
     @State private var showLink = false
     @State private var linkURL = "https://"
 
@@ -182,14 +183,27 @@ struct FormatBar: View {
             tool("italic", "italic")
             tool("underline", "underline")
             tool("strikethrough", "strikethrough")
-            ColorPicker("", selection: $textColor, supportsOpacity: false)
-                .labelsHidden()
-                .frame(width: 28)
-                .onChange(of: textColor) { _, c in
-                    if let hex = NSColor(c).usingColorSpace(.sRGB).map({ String(format: "#%02X%02X%02X", Int($0.redComponent * 255), Int($0.greenComponent * 255), Int($0.blueComponent * 255)) }) {
-                        editor.exec("foreColor", hex)
+            Button { showColors = true } label: {
+                Image(systemName: "paintbrush.pointed")
+                    .overlay(alignment: .bottom) { Capsule().fill(textColor).frame(width: 14, height: 3).offset(y: 4) }
+            }
+            .help("文字颜色")
+            .popover(isPresented: $showColors, arrowEdge: .bottom) {
+                LazyVGrid(columns: Array(repeating: GridItem(.fixed(22), spacing: 6), count: 8), spacing: 6) {
+                    ForEach(Self.palette, id: \.self) { hex in
+                        Button {
+                            textColor = Color(hex: hex)
+                            editor.exec("foreColor", hex)
+                            showColors = false
+                        } label: {
+                            RoundedRectangle(cornerRadius: 4).fill(Color(hex: hex)).frame(width: 22, height: 22)
+                                .overlay(RoundedRectangle(cornerRadius: 4).stroke(Color.secondary.opacity(0.4)))
+                        }
+                        .buttonStyle(.plain)
                     }
                 }
+                .padding(10)
+            }
             Divider().frame(height: 16)
             tool("list.bullet", "insertUnorderedList")
             tool("list.number", "insertOrderedList")
@@ -228,6 +242,11 @@ struct FormatBar: View {
         .padding(.horizontal, 8)
         .padding(.vertical, 4)
     }
+
+    static let palette = [
+        "#000000", "#434343", "#666666", "#999999", "#B7B7B7", "#D9D9D9", "#EFEFEF", "#FFFFFF",
+        "#C0392B", "#E67E22", "#F1C40F", "#27AE60", "#16A085", "#2980B9", "#8E44AD", "#D35400",
+    ]
 
     private func tool(_ symbol: String, _ cmd: String) -> some View {
         Button { editor.exec(cmd) } label: { Image(systemName: symbol) }

@@ -524,6 +524,7 @@ struct RecipientField: View {
                         .padding(.vertical, 4)
                     }
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
         .padding(.horizontal, 12).padding(.vertical, 6)
     }
