@@ -96,6 +96,7 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.comeheretosee.mailbox.helper
         PRODUCT_NAME: MailboxHelper
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         SKIP_INSTALL: YES
         SWIFT_OBJC_BRIDGING_HEADER: MailboxHelper/Bridging-Header.h
         HEADER_SEARCH_PATHS: $(SRCROOT)/../core/crates/mailcore-ffi/include

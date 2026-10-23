@@ -1,0 +1,67 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  core:
+    name: Rust core (Linux, Dovecot + GreenMail)
+    runs-on: ubuntu-24.04
+    env:
+      MAILBOX_TEST_SERVERS: "1"
+      MAILBOX_TEST_ENV: /tmp/mailbox-test-env
+    steps:
+      - uses: actions/checkout@v4
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: core
+      - name: Install test mail servers
+        run: |
+          sudo apt-get update -qq
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq dovecot-imapd dovecot-pop3d
+          sudo systemctl stop dovecot || true
+          mkdir -p /tmp/mailbox-test-env
+          curl -sSL -o /tmp/mailbox-test-env/greenmail.jar \
+            https://repo1.maven.org/maven2/com/icegreen/greenmail-standalone/2.1.2/greenmail-standalone-2.1.2.jar
+          sudo -E scripts/test-env/start.sh
+      - name: Test
+        working-directory: core
+        run: cargo test --workspace
+
+  macos:
+    name: macOS app
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: core
+      - name: Tools
+        run: |
+          brew install xcodegen
+          xcodebuild -version
+          rustup target add aarch64-apple-darwin x86_64-apple-darwin
+      - name: Build app and DMG
+        run: scripts/build-macos.sh
+      - name: Upload build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: xcodebuild-log
+          path: macos/build/xcodebuild.log
+          if-no-files-found: ignore
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Mailbox-dmg
+          path: dist/Mailbox.dmg
+      - name: Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/Mailbox.dmg
