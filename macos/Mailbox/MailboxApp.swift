@@ -21,7 +21,7 @@ struct MailboxApp: App {
         }
         .defaultSize(width: 760, height: 640)
 
-        Settings {
+        SwiftUI.Settings {
             SettingsView()
                 .environmentObject(state)
         }
@@ -50,13 +50,15 @@ final class WindowRouter {
 }
 
 final class AppDelegate: NSObject, NSApplicationDelegate {
+    private let services = ServicesProvider()
+
     func applicationWillFinishLaunching(_ notification: Notification) {
         NSAppleEventManager.shared().setEventHandler(self, andSelector: #selector(handleURL(_:withReply:)),
                                                      forEventClass: AEEventClass(kInternetEventClass), andEventID: AEEventID(kAEGetURL))
     }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
-        NSApp.servicesProvider = ServicesProvider()
+        NSApp.servicesProvider = services
         NSUpdateDynamicServices()
         Task { @MainActor in await AppState.shared.bootstrap() }
     }

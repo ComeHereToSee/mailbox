@@ -1,5 +1,6 @@
 import AppKit
 import SwiftUI
+import UniformTypeIdentifiers
 import WebKit
 
 /// Drives the contenteditable WKWebView used for composing HTML mail.
@@ -56,23 +57,23 @@ final class RichEditorController: NSObject, ObservableObject, WKScriptMessageHan
         return String(arr.dropFirst().dropLast())
     }
 
-    nonisolated func userContentController(_ controller: WKUserContentController, didReceive message: WKScriptMessage) {
+    func userContentController(_ controller: WKUserContentController, didReceive message: WKScriptMessage) {
         let body = message.body as? String
-        Task { @MainActor in
-            if body == "ready" {
-                self.ready = true
-                if let html = self.pendingHTML {
-                    self.pendingHTML = nil
-                    self.setHTML(html)
-                }
-            } else {
+        if body == "ready" {
+            ready = true
+            if let html = pendingHTML {
+                pendingHTML = nil
+                setHTML(html)
+            }
+        } else {
+            Task {
                 _ = await self.html()
                 self.onChange?()
             }
         }
     }
 
-    nonisolated func webView(_ webView: WKWebView, decidePolicyFor action: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+    func webView(_ webView: WKWebView, decidePolicyFor action: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
         // The editor never navigates: dropped files and clicked links must not replace it.
         if action.navigationType == .other, action.request.url?.scheme == "about" || action.request.url?.scheme == "mailbox-cid" {
             decisionHandler(.allow)

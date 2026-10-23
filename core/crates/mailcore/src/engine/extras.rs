@@ -258,3 +258,83 @@ mod tests {
         assert_eq!(parts[1], b);
     }
 }
+
+#[derive(serde::Serialize, Debug, Default)]
+pub struct StorageReport {
+    pub database_bytes: u64,
+    pub messages_bytes: u64,
+    pub cache_bytes: u64,
+    pub message_count: i64,
+}
+
+fn dir_size(path: &Path) -> u64 {
+    let Ok(rd) = std::fs::read_dir(path) else { return 0 };
+    rd.flatten()
+        .map(|e| {
+            let p = e.path();
+            if p.is_dir() { dir_size(&p) } else { e.metadata().map(|m| m.len()).unwrap_or(0) }
+        })
+        .sum()
+}
+
+impl Engine {
+    pub fn storage_report(&self) -> Result<StorageReport> {
+        let db_path = self.paths.db();
+        let wal = db_path.with_extension("db-wal");
+        let database_bytes = [db_path, wal].iter().filter_map(|p| std::fs::metadata(p).ok()).map(|m| m.len()).sum();
+        let message_count = self.db.count_messages(&Mailbox::All, false)?
+            + self.db.count_messages(&Mailbox::Unified(FolderRole::Trash), false)?
+            + self.db.count_messages(&Mailbox::Unified(FolderRole::Junk), false)?;
+        Ok(StorageReport {
+            database_bytes,
+            messages_bytes: dir_size(&self.paths.root.join("blobs")),
+            cache_bytes: dir_size(&self.paths.attachments()) + dir_size(&self.paths.tmp()),
+            message_count,
+        })
+    }
+
+    /// Drops cached mail older than each account's sync window (it stays on the server),
+    /// deletes unreferenced message files and clears the attachment cache. Returns bytes freed.
+    pub fn cleanup(&self) -> Result<u64> {
+        let before = self.storage_report()?;
+        for acc in self.db.accounts()? {
+            if acc.kind != AccountKind::Imap || acc.config.sync_days == 0 || acc.provider.as_deref() == Some("demo") {
+                continue;
+            }
+            let cutoff = now() - acc.config.sync_days as i64 * 86_400;
+            for f in self.db.folders(Some(&acc.id))? {
+                if f.local {
+                    continue;
+                }
+                let old = self.db.messages_older_than(f.id, cutoff)?;
+                self.db.delete_messages(&old)?;
+            }
+        }
+        let blobs = self.paths.root.join("blobs");
+        if let Ok(dirs) = std::fs::read_dir(&blobs) {
+            for d in dirs.flatten() {
+                let prefix = d.file_name().to_string_lossy().to_string();
+                let Ok(files) = std::fs::read_dir(d.path()) else { continue };
+                for f in files.flatten() {
+                    let name = f.file_name().to_string_lossy().to_string();
+                    let hash = format!("{prefix}{}", name.trim_end_matches(".eml"));
+                    if !self.db.blob_in_use(&hash)? {
+                        let _ = std::fs::remove_file(f.path());
+                    }
+                }
+            }
+        }
+        for dir in [self.paths.attachments(), self.paths.tmp()] {
+            let _ = std::fs::remove_dir_all(&dir);
+            let _ = std::fs::create_dir_all(&dir);
+        }
+        let _ = self.db.write(|c| {
+            c.execute_batch("PRAGMA wal_checkpoint(TRUNCATE); INSERT INTO messages_fts(messages_fts) VALUES('optimize');")?;
+            Ok(())
+        });
+        let after = self.storage_report()?;
+        let total = |r: &StorageReport| r.database_bytes + r.messages_bytes + r.cache_bytes;
+        self.changed(None);
+        Ok(total(&before).saturating_sub(total(&after)))
+    }
+}

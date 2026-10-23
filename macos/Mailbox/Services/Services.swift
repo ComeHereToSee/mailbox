@@ -6,6 +6,7 @@ import EventKit
 import LocalAuthentication
 import ServiceManagement
 import SwiftUI
+import UniformTypeIdentifiers
 import WebKit
 
 // MARK: - Contacts
@@ -183,8 +184,8 @@ final class PrintService: NSObject, WKNavigationDelegate {
         web.loadHTMLString(html, baseURL: URL(string: "about:blank"))
     }
 
-    nonisolated func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-        Task { @MainActor in
+    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+        Task {
             try? await Task.sleep(nanoseconds: 400_000_000)
             self.completion?(webView)
             self.completion = nil

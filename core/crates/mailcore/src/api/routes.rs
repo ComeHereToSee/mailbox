@@ -83,6 +83,8 @@ pub(super) fn router(state: AppState) -> Router {
         .route("/v1/import", post(import))
         .route("/v1/export", post(export))
         .route("/v1/demo", post(demo))
+        .route("/v1/storage", get(storage))
+        .route("/v1/cleanup", post(cleanup))
         .route("/v1/calendar/invite", post(build_invite))
         .with_state(state)
 }
@@ -777,6 +779,14 @@ async fn export(State(st): St, Json(b): Json<ExportBody>) -> ApiResult<Json<Valu
         .export_messages(b.ids, b.folder_id, std::path::Path::new(&b.path), b.format.as_deref().unwrap_or("mbox"))
         .await?;
     Ok(Json(json!({ "exported": n })))
+}
+
+async fn storage(State(st): St) -> ApiResult<Json<Value>> {
+    Ok(Json(json!(st.engine.storage_report()?)))
+}
+
+async fn cleanup(State(st): St) -> ApiResult<Json<Value>> {
+    Ok(Json(json!({ "freed": st.engine.cleanup()? })))
 }
 
 async fn demo(State(st): St) -> ApiResult<Json<Value>> {

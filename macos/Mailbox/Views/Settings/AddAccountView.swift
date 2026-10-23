@@ -499,7 +499,7 @@ struct ServerFields: View {
                 HStack {
                     TextField("993", value: $server.port, format: .number.grouping(.never)).textFieldStyle(.roundedBorder).frame(width: 80)
                     Picker("", selection: $server.security) {
-                        ForEach(Security.allCases) { Text($0.title).tag($0) }
+                        ForEach(ConnectionSecurity.allCases) { Text($0.title).tag($0) }
                     }
                     .labelsHidden()
                     .frame(width: 140)

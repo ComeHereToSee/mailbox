@@ -66,6 +66,7 @@ targets:
         CODE_SIGN_ENTITLEMENTS: Mailbox/Mailbox.entitlements
         INFOPLIST_KEY_NSHumanReadableCopyright: "© ComeHereToSee"
     dependencies:
+      - sdk: AppIntents.framework
       - target: MailboxHelper
         embed: true
         codeSign: false

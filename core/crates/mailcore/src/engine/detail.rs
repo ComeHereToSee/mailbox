@@ -16,15 +16,17 @@ pub(crate) fn store_body(e: &Engine, id: MessageId, raw: &[u8]) -> Result<(Heade
         if let Some(dir) = path.parent() {
             std::fs::create_dir_all(dir)?;
         }
-        crate::paths::write_private(&path, raw)?;
+        crate::paths::write_private(&path, &e.secrets.seal(raw)?)?;
     }
     let (h, b) = mime::parse_full(raw);
     e.db.set_message_body(id, &hash, &b.snippet, &b.search_text, &b.attachments, h.unsubscribe.as_ref())?;
     Ok((h, b))
 }
 
+/// Message files are encrypted at rest with the master key.
 pub(crate) fn read_blob(e: &Engine, hash: &str) -> Option<Vec<u8>> {
-    std::fs::read(e.paths.blob(hash)).ok()
+    let data = std::fs::read(e.paths.blob(hash)).ok()?;
+    e.secrets.open_sealed(data).ok()
 }
 
 fn spoof_warnings(m: &StoredMessage, h: &Headers) -> Vec<String> {

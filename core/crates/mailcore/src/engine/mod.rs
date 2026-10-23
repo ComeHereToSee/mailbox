@@ -372,6 +372,7 @@ impl Engine {
 
     async fn housekeeping_loop(&self) {
         let mut tick = tokio::time::interval(Duration::from_secs(30));
+        let mut last_cleanup = Instant::now();
         loop {
             tokio::select! {
                 _ = self.shutdown.cancelled() => return,
@@ -402,6 +403,12 @@ impl Engine {
                 }
             }
             let _ = self.db.purge_outbox(now - 7 * 86_400);
+            if last_cleanup.elapsed() > Duration::from_secs(24 * 3600) {
+                last_cleanup = Instant::now();
+                if let Err(e) = self.cleanup() {
+                    tracing::warn!(error = %e, "cache cleanup failed");
+                }
+            }
         }
     }
 

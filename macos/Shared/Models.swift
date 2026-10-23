@@ -25,9 +25,9 @@ enum AccountKind: String, LenientEnum, CaseIterable {
     static var fallback: AccountKind { .imap }
 }
 
-enum Security: String, LenientEnum, CaseIterable, Identifiable {
+enum ConnectionSecurity: String, LenientEnum, CaseIterable, Identifiable {
     case tls, startTls = "start_tls", none
-    static var fallback: Security { .tls }
+    static var fallback: ConnectionSecurity { .tls }
     var id: String { rawValue }
     var title: String {
         switch self {
@@ -122,7 +122,7 @@ enum ComposeMode: String, LenientEnum {
 struct ServerConfig: Codable, Hashable {
     var host: String = ""
     var port: Int = 993
-    var security: Security = .tls
+    var security: ConnectionSecurity = .tls
     var username: String?
     var acceptInvalidCerts: Bool = false
 }
@@ -683,7 +683,6 @@ enum MailEvent {
         var message: MessageSummary?
         var notify: Bool?
         var sound: Bool?
-        var status: AccountStatus?
         var id: String?
         var error: String?
         var state: String?
@@ -692,6 +691,10 @@ enum MailEvent {
         var total: Int?
         var accounts: [[JSONValue]]?
         var messageId: Int64?
+    }
+
+    private struct StatusEnvelope: Decodable {
+        var status: AccountStatus
     }
 
     private struct OutboxEnvelope: Decodable {
@@ -711,8 +714,8 @@ enum MailEvent {
         case "messages_changed": return .messagesChanged(accountId: env.accountId)
         case "folders_changed": return .foldersChanged(accountId: env.accountId ?? "")
         case "account_status":
-            guard let s = env.status else { return .unknown }
-            return .accountStatus(s)
+            guard let s = try? JSON.decoder.decode(StatusEnvelope.self, from: data) else { return .unknown }
+            return .accountStatus(s.status)
         case "accounts_changed": return .accountsChanged
         case "outbox":
             guard let o = try? JSON.decoder.decode(OutboxEnvelope.self, from: data) else { return .unknown }

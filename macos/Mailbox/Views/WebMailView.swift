@@ -61,19 +61,19 @@ final class WebMailStore: NSObject, ObservableObject, WKScriptMessageHandler {
         }
     }
 
-    nonisolated func userContentController(_ controller: WKUserContentController, didReceive message: WKScriptMessage) {
+    func userContentController(_ controller: WKUserContentController, didReceive message: WKScriptMessage) {
         guard let body = message.body as? [String: Any] else { return }
         let title = body["title"] as? String ?? "新邮件"
         let text = body["body"] as? String ?? ""
         let webView = message.webView
-        Task { @MainActor in
+        Task {
             let id = self.views.first { $0.value === webView }?.key
             let label = id.flatMap { self.labels[$0] } ?? "网页邮箱"
             let content = UNMutableNotificationContent()
             content.title = "[\(label)] \(title)"
             content.body = text
             content.sound = .default
-            try? await UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound])
+            _ = try? await UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound])
             try? await UNUserNotificationCenter.current().add(UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil))
         }
     }

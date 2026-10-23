@@ -811,6 +811,8 @@ struct AdvancedSettings: View {
     @EnvironmentObject private var state: AppState
     @State private var importFolder: Int64?
     @State private var message: String?
+    @State private var storage: APIClient.StorageReport?
+    @State private var cleaning = false
 
     var body: some View {
         Form {
@@ -836,6 +838,27 @@ struct AdvancedSettings: View {
                 }
                 if let message { Text(message).font(.caption).foregroundStyle(.secondary) }
             }
+            Section("存储") {
+                if let s = storage {
+                    LabeledContent("本地邮件", value: "\(s.messageCount) 封")
+                    LabeledContent("邮件内容", value: Fmt.size(s.messagesBytes))
+                    LabeledContent("索引数据库", value: Fmt.size(s.databaseBytes))
+                    LabeledContent("附件缓存", value: Fmt.size(s.cacheBytes))
+                }
+                HStack {
+                    Button("清理缓存") {
+                        cleaning = true
+                        Task {
+                            let freed = (try? await state.api.cleanup()) ?? 0
+                            storage = try? await state.api.storage()
+                            message = "已释放 \(Fmt.size(freed))"
+                            cleaning = false
+                        }
+                    }
+                    .disabled(cleaning)
+                    Text("超出同步范围的旧邮件只保留在服务器上，需要时可用服务器搜索找回。").font(.caption).foregroundStyle(.secondary)
+                }
+            }
             Section("数据") {
                 LabeledContent("数据位置", value: Daemon.dataDir.path)
                 HStack {
@@ -847,6 +870,7 @@ struct AdvancedSettings: View {
         }
         .formStyle(.grouped)
         .onChange(of: state.settings) { _, _ in persist(state) }
+        .task { storage = try? await state.api.storage() }
     }
 
     private func importFiles() {

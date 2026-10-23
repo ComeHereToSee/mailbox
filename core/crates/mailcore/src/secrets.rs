@@ -18,6 +18,8 @@ const KEYCHAIN_SERVICE: &str = "com.comeheretosee.mailbox";
 #[cfg_attr(not(target_os = "macos"), allow(dead_code))]
 const KEYCHAIN_ACCOUNT: &str = "master-key";
 
+const BLOB_MAGIC: &[u8] = b"MBX1";
+
 pub struct Secrets {
     path: PathBuf,
     cipher: ChaCha20Poly1305,
@@ -117,6 +119,27 @@ impl Secrets {
         Ok(())
     }
 
+    /// Encrypts data with the master key (`MBX1` + nonce + ciphertext).
+    pub fn seal(&self, plain: &[u8]) -> Result<Vec<u8>> {
+        let mut nonce = [0u8; 12];
+        rand::thread_rng().fill_bytes(&mut nonce);
+        let ct = self.cipher.encrypt(Nonce::from_slice(&nonce), plain).map_err(|_| Error::Other("加密失败".into()))?;
+        let mut out = Vec::with_capacity(ct.len() + 16);
+        out.extend_from_slice(BLOB_MAGIC);
+        out.extend_from_slice(&nonce);
+        out.extend(ct);
+        Ok(out)
+    }
+
+    /// Reverses [`Secrets::seal`]; data without the marker is returned as is (older files).
+    pub fn open_sealed(&self, data: Vec<u8>) -> Result<Vec<u8>> {
+        if !data.starts_with(BLOB_MAGIC) || data.len() < BLOB_MAGIC.len() + 12 {
+            return Ok(data);
+        }
+        let (nonce, ct) = data[BLOB_MAGIC.len()..].split_at(12);
+        self.cipher.decrypt(Nonce::from_slice(nonce), ct).map_err(|_| Error::Other("本地邮件无法解密".into()))
+    }
+
     pub fn get(&self, key: &str) -> Option<String> {
         self.data.lock().get(key).cloned()
     }
@@ -178,5 +201,9 @@ mod tests {
         s.remove_prefix("account:a:").unwrap();
         assert!(s.get("account:a:password").is_none());
         assert!(s.get("account:b:password").is_some());
+        let sealed = s.seal(b"Subject: hi\r\n\r\nbody").unwrap();
+        assert!(sealed.starts_with(b"MBX1"));
+        assert_eq!(s.open_sealed(sealed).unwrap(), b"Subject: hi\r\n\r\nbody");
+        assert_eq!(s.open_sealed(b"plain".to_vec()).unwrap(), b"plain");
     }
 }

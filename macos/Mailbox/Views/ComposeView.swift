@@ -73,11 +73,11 @@ final class ComposeModel: ObservableObject {
         loaded = true
     }
 
-    static func escape(_ s: String) -> String {
+    nonisolated static func escape(_ s: String) -> String {
         s.replacingOccurrences(of: "&", with: "&amp;").replacingOccurrences(of: "<", with: "&lt;").replacingOccurrences(of: ">", with: "&gt;")
     }
 
-    static func parseAddress(_ s: String) -> EmailAddress {
+    nonisolated static func parseAddress(_ s: String) -> EmailAddress {
         let t = s.trimmingCharacters(in: .whitespacesAndNewlines)
         if let lt = t.lastIndex(of: "<"), let gt = t.lastIndex(of: ">"), lt < gt {
             let name = t[..<lt].trimmingCharacters(in: CharacterSet(charactersIn: " \""))
@@ -178,7 +178,7 @@ final class ComposeModel: ObservableObject {
         finished = true
     }
 
-    static func plain(_ html: String) -> String {
+    nonisolated static func plain(_ html: String) -> String {
         html.replacingOccurrences(of: "<[^>]+>", with: "", options: .regularExpression)
             .replacingOccurrences(of: "&nbsp;", with: " ")
             .trimmingCharacters(in: .whitespacesAndNewlines)

@@ -98,19 +98,19 @@ final class APIClient: @unchecked Sendable {
         }
     }
 
-    func get<T: Decodable>(_ path: String, query: [String: String?] = [:], as: T.Type = T.self) async throws -> T {
+    func get<T: Decodable>(_ path: String, query: [String: String?] = [:], as type: T.Type = T.self) async throws -> T {
         try JSON.decoder.decode(T.self, from: try await raw("GET", path, query: query))
     }
 
-    func post<T: Decodable>(_ path: String, _ body: (any Encodable)? = nil, query: [String: String?] = [:], as: T.Type = T.self) async throws -> T {
+    func post<T: Decodable>(_ path: String, _ body: (any Encodable)? = nil, query: [String: String?] = [:], as type: T.Type = T.self) async throws -> T {
         try JSON.decoder.decode(T.self, from: try await raw("POST", path, query: query, body: body ?? EmptyBody()))
     }
 
-    func put<T: Decodable>(_ path: String, _ body: any Encodable, as: T.Type = T.self) async throws -> T {
+    func put<T: Decodable>(_ path: String, _ body: any Encodable, as type: T.Type = T.self) async throws -> T {
         try JSON.decoder.decode(T.self, from: try await raw("PUT", path, body: body))
     }
 
-    func patch<T: Decodable>(_ path: String, _ body: any Encodable, as: T.Type = T.self) async throws -> T {
+    func patch<T: Decodable>(_ path: String, _ body: any Encodable, as type: T.Type = T.self) async throws -> T {
         try JSON.decoder.decode(T.self, from: try await raw("PATCH", path, body: body))
     }
 
@@ -330,6 +330,18 @@ extension APIClient {
         struct R: Decodable { var exported: Int }
         let r: R = try await post("/v1/export", B(ids: ids, folderId: folder, path: path, format: format))
         return r.exported
+    }
+    struct StorageReport: Decodable {
+        var databaseBytes: Int64
+        var messagesBytes: Int64
+        var cacheBytes: Int64
+        var messageCount: Int
+    }
+    func storage() async throws -> StorageReport { try await get("/v1/storage") }
+    func cleanup() async throws -> Int64 {
+        struct R: Decodable { var freed: Int64 }
+        let r: R = try await post("/v1/cleanup")
+        return r.freed
     }
     func seedDemo() async throws { try await send("POST", "/v1/demo", EmptyBody()) }
 }

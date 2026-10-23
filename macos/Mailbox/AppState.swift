@@ -210,6 +210,36 @@ final class AppState: ObservableObject {
         cursor = page.cursor
     }
 
+    /// Free-text part of the search box (operators removed) for IMAP SEARCH.
+    private var serverSearchText: String {
+        searchText.split(separator: " ").filter { !$0.contains(":") }.joined(separator: " ")
+    }
+
+    @Published var searchingServer = false
+
+    /// Searches mail outside the local cache on every IMAP account (or the selected one).
+    func searchServer() async {
+        let q = serverSearchText.trimmingCharacters(in: .whitespaces)
+        guard !q.isEmpty else { return }
+        searchingServer = true
+        defer { searchingServer = false }
+        var targets = accounts.filter { $0.kind == .imap && $0.enabled }
+        if selectedMailbox.hasPrefix("account:"), let id = selectedMailbox.split(separator: ":").dropFirst().first {
+            targets = targets.filter { $0.id == id }
+        }
+        var found = 0
+        for acc in targets {
+            if let results = try? await api.serverSearch(account: acc.id, folder: nil, query: q) {
+                let known = Set(messages.map(\.id))
+                let fresh = results.filter { !known.contains($0.id) }
+                found += fresh.count
+                messages.append(contentsOf: fresh)
+            }
+        }
+        messages.sort { $0.sortDate > $1.sortDate }
+        show(Toast(text: found > 0 ? "服务器上又找到 \(found) 封邮件" : "服务器上没有更多结果"))
+    }
+
     func scheduleReload(delay: UInt64 = 300_000_000) {
         reloadTask?.cancel()
         reloadTask = Task {

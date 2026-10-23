@@ -33,12 +33,28 @@ struct MessageListView: View {
                         if m.id == state.messages.last?.id { Task { await state.loadMore() } }
                     }
             }
+            if state.isSearching {
+                HStack {
+                    Spacer()
+                    if state.searchingServer {
+                        ProgressView().controlSize(.small)
+                    } else {
+                        Button("在服务器上搜索更多…") { Task { await state.searchServer() } }
+                            .buttonStyle(.link)
+                    }
+                    Spacer()
+                }
+                .padding(.vertical, 6)
+            }
         }
         .listStyle(.inset)
         .overlay {
             if state.messages.isEmpty && !state.loadingMessages {
                 if state.isSearching {
-                    ContentUnavailableView.search(text: state.searchText)
+                    VStack {
+                        ContentUnavailableView.search(text: state.searchText)
+                        Button("在服务器上搜索") { Task { await state.searchServer() } }
+                    }
                 } else {
                     ContentUnavailableView("没有邮件", systemImage: "tray", description: Text(emptyHint))
                 }
