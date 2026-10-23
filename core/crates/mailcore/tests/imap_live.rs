@@ -22,6 +22,9 @@ async fn imap_connect_list_append_flags_move() {
         c.logout().await;
     }
 
+    let bad = ImapConn::connect(&common::imap(Security::Tls), "alice@test.local", &ImapAuth::Password("nope".into()), true).await;
+    assert!(matches!(bad, Err(ref e) if e.is_auth()), "wrong password must be an auth error");
+
     let mut c = ImapConn::connect(&common::imap(Security::Tls), "alice@test.local", &ImapAuth::Password("secret".into()), true)
         .await
         .unwrap();

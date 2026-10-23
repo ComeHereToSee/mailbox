@@ -2,17 +2,23 @@
 //! local HTTP API used by the macOS app.
 
 pub mod autoconfig;
+pub mod categorize;
 pub mod error;
+pub mod html;
 pub mod imap;
 pub mod events;
 pub mod forward;
 pub mod ics;
+pub mod mime;
 pub mod model;
 pub mod net;
+pub mod oauth;
 pub mod paths;
 pub mod pop3;
+pub mod rules;
 pub mod search;
 pub mod secrets;
+pub mod smtp;
 pub mod store;
 
 pub use error::{Error, Result};
