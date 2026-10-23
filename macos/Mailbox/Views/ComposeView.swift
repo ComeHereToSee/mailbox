@@ -213,6 +213,11 @@ final class ComposeModel: ObservableObject {
         if markdownMode {
             markdownMode = false
             draft.markdown = nil
+            let html = markdownText
+                .components(separatedBy: "\n")
+                .map { $0.isEmpty ? "<div><br></div>" : "<div>\(Self.escape($0))</div>" }
+                .joined()
+            editor.setHTML(html)
         } else {
             let html = await editor.html()
             markdownText = Self.plain(html.replacingOccurrences(of: "<br>", with: "\n").replacingOccurrences(of: "</div>", with: "\n"))

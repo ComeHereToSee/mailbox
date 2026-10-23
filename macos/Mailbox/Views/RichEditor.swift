@@ -15,6 +15,9 @@ final class RichEditorController: NSObject, ObservableObject, WKScriptMessageHan
 
     func attach(_ web: WKWebView) {
         webView = web
+        // A fresh page: content is applied again once it reports "ready".
+        ready = false
+        pendingHTML = lastHTML
     }
 
     func setHTML(_ html: String) {
