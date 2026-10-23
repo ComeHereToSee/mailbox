@@ -10,12 +10,22 @@ CONFIG="${CONFIG:-Release}"
 cd "$ROOT/macos"
 xcodegen generate --quiet
 DERIVED="$ROOT/macos/build/DerivedData"
+LOG="$ROOT/macos/build/xcodebuild.log"
+mkdir -p "$ROOT/macos/build"
+set +e
 xcodebuild -project Mailbox.xcodeproj -scheme Mailbox -configuration "$CONFIG" \
   -derivedDataPath "$DERIVED" \
   CODE_SIGN_IDENTITY="-" CODE_SIGN_STYLE=Manual DEVELOPMENT_TEAM="" \
   ONLY_ACTIVE_ARCH=NO \
-  build | tee "$ROOT/macos/build/xcodebuild.log" | grep -E "error:|warning: .*deprecated|\*\* BUILD" || true
-test "${PIPESTATUS[0]}" -eq 0
+  build >"$LOG" 2>&1
+status=$?
+set -e
+grep -E "(error|warning): " "$LOG" | grep -v "^ld: warning" | sort -u | head -200 || true
+tail -3 "$LOG"
+if [ $status -ne 0 ]; then
+  echo "xcodebuild failed ($status)" >&2
+  exit $status
+fi
 
 APP="$DERIVED/Build/Products/$CONFIG/Mailbox.app"
 test -d "$APP/Contents/Library/LoginItems/MailboxHelper.app"
