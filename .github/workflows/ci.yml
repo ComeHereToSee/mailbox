@@ -44,6 +44,7 @@ jobs:
       - uses: Swatinem/rust-cache@v2
         with:
           workspaces: core
+          cache-targets: false
       - name: Tools
         run: |
           brew install xcodegen
